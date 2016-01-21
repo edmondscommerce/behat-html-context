@@ -1,5 +1,6 @@
 <?php namespace EdmondsCommerce\BehatHtmlContext;
 
+use Behat\Mink\Element\NodeElement;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Exception;
 
@@ -23,7 +24,37 @@ class HTMLContext extends RawMinkContext
         }
 
         $element->click();
+    }
 
+    /**
+     * Click first instance of visible text
+     *
+     * @When /^I click on the first visible text "([^"]*)"$/
+     */
+    public function iClickOnTheFirstVisibleText($text)
+    {
+        $session = $this->getSession();
+
+        /** @var NodeElement[] $elements */
+        $elements = $session->getPage()->findAll(
+            'xpath',
+            '/*//*[text()[contains(.,"' . $text . '")]]'
+        );
+
+        if (count($elements) == 0) {
+            throw new \InvalidArgumentException(sprintf('Cannot find text: "%s"', $text));
+        }
+
+        foreach($elements as $element)
+        {
+            if($element->isVisible())
+            {
+                $element->click();
+                return;
+            }
+        }
+
+        throw new \InvalidArgumentException(sprintf('Cannot find text that is visible: "%s"', $text));
     }
 
     /**
