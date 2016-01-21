@@ -1,0 +1,28 @@
+{
+    "name": "edmondscommerce/behat-html-context",
+    "description": "A Behat Extension for HTML",
+    "keywords": [
+        "Behat",
+        "Testing",
+        "Logging",
+        "HTML",
+        "Browser"
+    ],
+    "homepage": "https://www.edmondscommerce.co.uk",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "edmondscommerce",
+            "email": "info@edmondscommerce.co.uk"
+        }
+    ],
+    "minimum-stability": "dev",
+    "require": {
+        "behat/behat": "~3.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "EdmondsCommerce\\BehatHtmlContext\\": "src/"
+        }
+    }
+}
