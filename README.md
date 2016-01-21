@@ -18,5 +18,6 @@ Install via composer
                 # ...
                 contexts:
                     - # ...
-                    - EdmondsCommerce\BehatHtmlContext\BehatHtmlContext
+                    - EdmondsCommerce\BehatHtmlContext\HTMLContext
+                    - EdmondsCommerce\BehatHtmlContext\RedirectionContext
                     
