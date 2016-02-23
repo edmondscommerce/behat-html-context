@@ -216,11 +216,11 @@ class HTMLContext extends RawMinkContext
         $select = $elements1 = $this->getSession()
             ->getPage()
             ->find( "named", array('select', $name) );
-        if(!$select->has('named', array('option', $value))) {
+        if($select->has('named', array('option', $value))) {
             return true;
         }
 
-        throw new Exception('Element ' . $name . ' should not contain an option named ' . $value . " but one was found");
+        throw new Exception('Element ' . $name . ' should contain an option named ' . $value . " but one was not found");
 
     }
 
