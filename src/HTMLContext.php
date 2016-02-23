@@ -207,4 +207,38 @@ class HTMLContext extends RawMinkContext
         $this->getSession()->evaluateScript("document.getElementById('".$id."').submit();");
     }
 
+
+    /**
+     * @Then the select :name should contain an option :value
+     */
+    public function theSelectShouldContainValue($name, $value) {
+
+        $select = $elements1 = $this->getSession()
+            ->getPage()
+            ->find( "named", array('select', $name) );
+        if(!$select->has('named', array('option', $value))) {
+            return true;
+        }
+
+        throw new Exception('Element ' . $name . ' should not contain an option named ' . $value . " but one was found");
+
+    }
+
+    /**
+     * @Then the select :name should not contain an option :value
+     */
+    public function theSelectShouldNotContainValue($name, $value) {
+
+        $select = $elements1 = $this->getSession()
+            ->getPage()
+            ->find( "named", array('select', $name) );
+        if(!$select->has('named', array('option', $value))) {
+            return true;
+        }
+
+        throw new Exception('Element ' . $name . ' should not contain an option named ' . $value . " but one was found");
+
+    }
+
+
 }
