@@ -82,7 +82,7 @@ class HTMLContext extends RawMinkContext
     {
         $session = $this->getSession();
         $session->executeScript('
-            var $elem = $("' . $css . '");
+            var $elem = jQuery("' . $css . '");
             var position = $elem.position();
             window.scrollTo(position.left, position.top);
         ');
