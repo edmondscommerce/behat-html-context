@@ -240,5 +240,44 @@ class HTMLContext extends RawMinkContext
 
     }
 
+    /**
+     * @Then the element :css attribute :attribute should contain :value
+     */
+    public function theElementAttributeShoudldNotContainValue($css, $attribute, $value) {
+        $element = $this->getSession()
+            ->getPage()
+            ->find( "css", $css );
+
+        if(is_null($element)) {
+            throw new Exception("No element matching the CSS " . $css . " was found");
+        }
+
+        $attributeValue = $element->getAttribute($attribute);
+
+        if(strpos($attributeValue, $value) === false) {
+            throw new Exception("The element " . $css . "'s attribute " . $attribute . " doesn't contain " . $value);
+        }
+
+    }
+
+    /**
+     * @Then the element :css attribute :attribute should not contain :value
+     */
+    public function theElementAttributeShouldNotContainValue($css, $attribute, $value) {
+        $element = $this->getSession()
+            ->getPage()
+            ->find( "css", $css );
+
+        if(is_null($element)) {
+            throw new Exception("No element matching the CSS " . $css . " was found");
+        }
+
+        $attributeValue = $element->getAttribute($attribute);
+
+        if(strpos($attributeValue, $value) !== false) {
+            throw new Exception("The element " . $css . "'s attribute " . $attribute . " doesn't contain " . $value);
+        }
+
+    }
 
 }
