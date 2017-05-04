@@ -1,4 +1,4 @@
-#Behat HTML Context
+# Behat HTML Context
 ## By [Edmonds Commerce](https://www.edmondscommerce.co.uk)
 
 A simple Behat Context for working with HTML and navigation
