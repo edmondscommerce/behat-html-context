@@ -19,7 +19,8 @@ class HTMLContext extends RawMinkContext
             'xpath',
             '/*//*[text()[contains(.,"' . $text . '")]]'
         );
-        if (null === $element) {
+        if (null === $element)
+        {
             throw new \InvalidArgumentException(sprintf('Cannot find text: "%s"', $text));
         }
 
@@ -41,13 +42,14 @@ class HTMLContext extends RawMinkContext
             '/*//*[text()[contains(.,"' . $text . '")]]'
         );
 
-        if (count($elements) == 0) {
+        if (count($elements) == 0)
+        {
             throw new \InvalidArgumentException(sprintf('Cannot find text: "%s"', $text));
         }
 
-        foreach($elements as $element)
+        foreach ($elements as $element)
         {
-            if($element->isVisible())
+            if ($element->isVisible())
             {
                 $element->click();
                 return;
@@ -66,7 +68,8 @@ class HTMLContext extends RawMinkContext
     {
         $session = $this->getSession();
         $element = $session->getPage()->find('css', $css);
-        if (null === $element) {
+        if (null === $element)
+        {
             throw new \InvalidArgumentException(sprintf('Cannot find element with css: "%s"', $css));
         }
 
@@ -97,7 +100,7 @@ class HTMLContext extends RawMinkContext
     {
         $session = $this->getSession();
         $session->executeScript('
-            $("'.$css.'").hide();
+            $("' . $css . '").hide();
         ');
         $session->wait(5000);
     }
@@ -110,7 +113,8 @@ class HTMLContext extends RawMinkContext
     {
         $session = $this->getSession();
         $element = $session->getPage()->find('css', $css);
-        if (null === $element) {
+        if (null === $element)
+        {
             throw new \InvalidArgumentException(sprintf('Cannot find element with css: "%s"', $css));
         }
     }
@@ -123,7 +127,8 @@ class HTMLContext extends RawMinkContext
     {
         $session = $this->getSession();
         $element = $session->getPage()->find('css', $css);
-        if (null !== $element) {
+        if (null !== $element)
+        {
             throw new \InvalidArgumentException(sprintf('Found element with css: "%s"', $css));
         }
     }
@@ -131,6 +136,7 @@ class HTMLContext extends RawMinkContext
 
     /**
      * @Then /^I maximize browser window size$/
+     * @throws Exception
      */
     public function maximiseWindow()
     {
@@ -163,37 +169,45 @@ class HTMLContext extends RawMinkContext
 
     /**
      * @Then I scroll to the element with :selectortype :css
+     * @throws Exception
      */
     public function iScrollToElement($selectortype, $selector)
     {
-        if(!in_array($selectortype, array("class", "id"))) {
+        if (!in_array($selectortype, array("class", "id")))
+        {
             throw new Exception("Selector type has to be either 'class' or 'id'");
         }
-        if(in_array(substr($selector, 0, 1), array(".", "#"))) {
+        if (in_array(substr($selector, 0, 1), array(".", "#")))
+        {
             throw new Exception("Selector should plain without a . or #");
         }
 
-        if($selectortype == "class") {
+        if ($selectortype == "class")
+        {
             $this->getSession()->evaluateScript("document.getElementsByClassName('" . $selector . "').item(0).scrollIntoView();");
         }
-        if($selectortype == "id") {
-            $this->getSession()->evaluateScript("document.getElementById('".$selector."').scrollIntoView();");
+        if ($selectortype == "id")
+        {
+            $this->getSession()->evaluateScript("document.getElementById('" . $selector . "').scrollIntoView();");
         }
     }
 
     /**
      * @Then I should see one of the elements :css1 or :css2
+     * @throws Exception
      */
-    public function iShouldSeeXorY($css1, $css2) {
+    public function iShouldSeeXorY($css1, $css2)
+    {
 
         $elements1 = $this->getSession()
             ->getPage()
-            ->findAll( "css", $css1 );
+            ->findAll("css", $css1);
         $elements2 = $this->getSession()
             ->getPage()
-            ->findAll( "css", $css2 );
+            ->findAll("css", $css2);
 
-        if(sizeof($elements1) > 0 xor sizeof($elements2) > 0) {
+        if (sizeof($elements1) > 0 xor sizeof($elements2) > 0)
+        {
             return true;
         }
 
@@ -203,20 +217,24 @@ class HTMLContext extends RawMinkContext
     /**
      * @Then I submit the form :id
      */
-    public function iSubmitTheForm($id) {
-        $this->getSession()->evaluateScript("document.getElementById('".$id."').submit();");
+    public function iSubmitTheForm($id)
+    {
+        $this->getSession()->evaluateScript("document.getElementById('" . $id . "').submit();");
     }
 
 
     /**
      * @Then the select :name should contain an option :value
+     * @throws Exception
      */
-    public function theSelectShouldContainValue($name, $value) {
+    public function theSelectShouldContainValue($name, $value)
+    {
 
         $select = $elements1 = $this->getSession()
             ->getPage()
-            ->find( "named", array('select', $name) );
-        if($select->has('named', array('option', $value))) {
+            ->find("named", array('select', $name));
+        if ($select->has('named', array('option', $value)))
+        {
             return true;
         }
 
@@ -226,13 +244,16 @@ class HTMLContext extends RawMinkContext
 
     /**
      * @Then the select :name should not contain an option :value
+     * @throws Exception
      */
-    public function theSelectShouldNotContainValue($name, $value) {
+    public function theSelectShouldNotContainValue($name, $value)
+    {
 
         $select = $elements1 = $this->getSession()
             ->getPage()
-            ->find( "named", array('select', $name) );
-        if(!$select->has('named', array('option', $value))) {
+            ->find("named", array('select', $name));
+        if (!$select->has('named', array('option', $value)))
+        {
             return true;
         }
 
@@ -242,19 +263,23 @@ class HTMLContext extends RawMinkContext
 
     /**
      * @Then the element :css attribute :attribute should contain :value
+     * @throws Exception
      */
-    public function theElementAttributeShoudldNotContainValue($css, $attribute, $value) {
+    public function theElementAttributeShoudldNotContainValue($css, $attribute, $value)
+    {
         $element = $this->getSession()
             ->getPage()
-            ->find( "css", $css );
+            ->find("css", $css);
 
-        if(is_null($element)) {
+        if (is_null($element))
+        {
             throw new Exception("No element matching the CSS " . $css . " was found");
         }
 
         $attributeValue = $element->getAttribute($attribute);
 
-        if(strpos($attributeValue, $value) === false) {
+        if (strpos($attributeValue, $value) === false)
+        {
             throw new Exception("The element " . $css . "'s attribute " . $attribute . " doesn't contain " . $value);
         }
 
@@ -262,23 +287,84 @@ class HTMLContext extends RawMinkContext
 
     /**
      * @Then the element :css attribute :attribute should not contain :value
+     * @throws Exception
      */
-    public function theElementAttributeShouldNotContainValue($css, $attribute, $value) {
+    public function theElementAttributeShouldNotContainValue($css, $attribute, $value)
+    {
         $element = $this->getSession()
             ->getPage()
-            ->find( "css", $css );
+            ->find("css", $css);
 
-        if(is_null($element)) {
+        if (is_null($element))
+        {
             throw new Exception("No element matching the CSS " . $css . " was found");
         }
 
         $attributeValue = $element->getAttribute($attribute);
 
-        if(strpos($attributeValue, $value) !== false) {
+        if (strpos($attributeValue, $value) !== false)
+        {
             throw new Exception("The element " . $css . "'s attribute " . $attribute . " doesn't contain " . $value);
         }
-
     }
 
+    /**
+     * @param $selector
+     * @param $locator
+     * @param null $message
+     * @return \Behat\Mink\Element\NodeElement
+     * @throws \Behat\Mink\Exception\ExpectationException
+     */
+    protected function findOneOrFail($selector, $locator, $message = null)
+    {
+        $search = $this->getSession()->getPage()->find($selector, $locator);
+        if ($search === null)
+        {
+            $message = ($message === null) ? 'Could not find the element ' . $locator : $message;
+            throw new \Behat\Mink\Exception\ExpectationException($message, $this->getSession()->getDriver());
+        }
+
+        return $search;
+    }
+
+    /**
+     * Trys to find one or many items, will fail if the result count is 0 or result is null
+     * @param $selector
+     * @param $locator
+     * @param null $message
+     * @return \Behat\Mink\Element\NodeElement[]
+     * @throws \Behat\Mink\Exception\ExpectationException
+     */
+    protected function findAllOrFail($selector, $locator, $message = null)
+    {
+        $search = $this->getSession()->getPage()->findAll($selector, $locator);
+        if (count($search) === 0 || $search === null)
+        {
+            $message = ($message === null) ? 'Could not find any elements ' . $locator : $message;
+            throw new \Behat\Mink\Exception\ExpectationException($message, $this->getSession()->getDriver());
+        }
+
+        return $search;
+    }
+
+    /**
+     * @param \Behat\Mink\Element\NodeElement $element
+     * @param $selector
+     * @param $locator
+     * @param null $message
+     * @return \Behat\Mink\Element\NodeElement|mixed|null
+     * @throws \Behat\Mink\Exception\ExpectationException
+     */
+    protected function findOrFailFromNode(\Behat\Mink\Element\NodeElement $element, $selector, $locator, $message = null)
+    {
+        $result = $element->find($selector, $locator);
+        if ($result === null)
+        {
+            $message = ($message === null) ? 'Could not find the element ' . $locator : $message;
+            throw new \Behat\Mink\Exception\ExpectationException($message, $this->getSession()->getDriver());
+        }
+
+        return $result;
+    }
 
 }
