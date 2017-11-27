@@ -315,7 +315,7 @@ class HTMLContext extends RawMinkContext
      * @return \Behat\Mink\Element\NodeElement
      * @throws \Behat\Mink\Exception\ExpectationException
      */
-    protected function findOneOrFail($selector, $locator, $message = null)
+    public function findOneOrFail($selector, $locator, $message = null)
     {
         $search = $this->getSession()->getPage()->find($selector, $locator);
         if ($search === null)
@@ -335,7 +335,7 @@ class HTMLContext extends RawMinkContext
      * @return \Behat\Mink\Element\NodeElement[]
      * @throws \Behat\Mink\Exception\ExpectationException
      */
-    protected function findAllOrFail($selector, $locator, $message = null)
+    public function findAllOrFail($selector, $locator, $message = null)
     {
         $search = $this->getSession()->getPage()->findAll($selector, $locator);
         if (count($search) === 0 || $search === null)
@@ -355,7 +355,7 @@ class HTMLContext extends RawMinkContext
      * @return \Behat\Mink\Element\NodeElement|mixed|null
      * @throws \Behat\Mink\Exception\ExpectationException
      */
-    protected function findOrFailFromNode(\Behat\Mink\Element\NodeElement $element, $selector, $locator, $message = null)
+    public function findOrFailFromNode(\Behat\Mink\Element\NodeElement $element, $selector, $locator, $message = null)
     {
         $result = $element->find($selector, $locator);
         if ($result === null)
