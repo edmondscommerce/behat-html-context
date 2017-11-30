@@ -1,6 +1,7 @@
 <?php namespace EdmondsCommerce\BehatHtmlContext;
 
 use Behat\Mink\Element\NodeElement;
+use Behat\Mink\Exception\ExpectationException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Exception;
 
@@ -312,8 +313,8 @@ class HTMLContext extends RawMinkContext
      * @param $selector
      * @param $locator
      * @param null $message
-     * @return \Behat\Mink\Element\NodeElement
-     * @throws \Behat\Mink\Exception\ExpectationException
+     * @return NodeElement
+     * @throws ExpectationException
      */
     public function findOneOrFail($selector, $locator, $message = null)
     {
@@ -321,7 +322,7 @@ class HTMLContext extends RawMinkContext
         if ($search === null)
         {
             $message = ($message === null) ? 'Could not find the element ' . $locator : $message;
-            throw new \Behat\Mink\Exception\ExpectationException($message, $this->getSession()->getDriver());
+            throw new ExpectationException($message, $this->getSession()->getDriver());
         }
 
         return $search;
@@ -332,8 +333,8 @@ class HTMLContext extends RawMinkContext
      * @param $selector
      * @param $locator
      * @param null $message
-     * @return \Behat\Mink\Element\NodeElement[]
-     * @throws \Behat\Mink\Exception\ExpectationException
+     * @return NodeElement[]
+     * @throws ExpectationException
      */
     public function findAllOrFail($selector, $locator, $message = null)
     {
@@ -341,27 +342,47 @@ class HTMLContext extends RawMinkContext
         if (count($search) === 0 || $search === null)
         {
             $message = ($message === null) ? 'Could not find any elements ' . $locator : $message;
-            throw new \Behat\Mink\Exception\ExpectationException($message, $this->getSession()->getDriver());
+            throw new ExpectationException($message, $this->getSession()->getDriver());
         }
 
         return $search;
     }
 
     /**
-     * @param \Behat\Mink\Element\NodeElement $element
+     * @param NodeElement $element
      * @param $selector
      * @param $locator
      * @param null $message
-     * @return \Behat\Mink\Element\NodeElement|mixed|null
-     * @throws \Behat\Mink\Exception\ExpectationException
+     * @return NodeElement|mixed|null
+     * @throws ExpectationException
      */
-    public function findOrFailFromNode(\Behat\Mink\Element\NodeElement $element, $selector, $locator, $message = null)
+    public function findOrFailFromNode(NodeElement $element, $selector, $locator, $message = null)
     {
         $result = $element->find($selector, $locator);
         if ($result === null)
         {
             $message = ($message === null) ? 'Could not find the element ' . $locator : $message;
-            throw new \Behat\Mink\Exception\ExpectationException($message, $this->getSession()->getDriver());
+            throw new ExpectationException($message, $this->getSession()->getDriver());
+        }
+
+        return $result;
+    }
+
+    /**
+     * @param NodeElement $element
+     * @param $selector
+     * @param $locator
+     * @param null $message
+     * @return NodeElement[]
+     * @throws ExpectationException
+     */
+    public function findAllOrFailFromNode(NodeElement $element, $selector, $locator, $message = null)
+    {
+        $result = $element->findAll($selector, $locator);
+        if ($result === null || count($result) == 0)
+        {
+            $message = ($message === null) ? 'Could not find the element ' . $locator : $message;
+            throw new ExpectationException($message, $this->getSession()->getDriver());
         }
 
         return $result;
