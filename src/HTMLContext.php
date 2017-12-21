@@ -388,4 +388,29 @@ class HTMLContext extends RawMinkContext
         return $result;
     }
 
+    /**
+     * Extracts a table's values in to a standard PHP array from a node
+     * Can also be passed tbody, thead, tfoot as well as table
+     * @param NodeElement $element
+     * @return array
+     */
+    public function getTable(NodeElement $element)
+    {
+        //Extract the table data
+        $result = [];
+
+        /** @var NodeElement $row */
+        foreach($element->findAll( 'css','tr') as $row)
+        {
+            $rowResult = [];
+            /** @var NodeElement $cell */
+            foreach($row->findAll('css', 'th,td') as $cell)
+            {
+                $rowResult[] = $cell->getText();
+            }
+            $result[] = $rowResult;
+        }
+
+        return $result;
+    }
 }
