@@ -19,11 +19,21 @@
     "minimum-stability": "dev",
     "require": {
         "behat/behat": "~3.0",
-        "behat/mink": "~1.6"
+        "behat/mink": "~1.6",
+        "behat/mink-extension": "~2.0"
     },
     "autoload": {
         "psr-4": {
             "EdmondsCommerce\\BehatHtmlContext\\": "src/"
         }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "EdmondsCommerce\\BehatHtmlContext\\": "tests/"
+        }
+    },
+    "require-dev": {
+        "edmondscommerce/phpqa": "dev-master",
+        "edmondscommerce/mock-server": "dev-master@dev"
     }
 }
