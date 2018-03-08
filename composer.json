@@ -34,6 +34,7 @@
     },
     "require-dev": {
         "edmondscommerce/phpqa": "dev-master",
-        "edmondscommerce/mock-server": "dev-master@dev"
+        "edmondscommerce/mock-server": "dev-master@dev",
+        "behat/mink-goutte-driver": "^1.2@dev"
     }
 }
