@@ -26,9 +26,12 @@ class HtmlContextTest extends AbstractTestCase
         $this->server = new MockServer(__DIR__ . '/assets/routers/clickontext.php');
         $this->server->startServer();
 
+        $mink = new Mink(['goutte' => $this->minkSession]);
+        $mink->setDefaultSessionName('goutte');
+
         //Set up Mink in the class
-        $context = new HTMLContext();
-        $context->setMink(new Mink([$this->minkSession]));
+        $this->context = new HTMLContext();
+        $this->context->setMink($mink);
     }
 
     public function testClickOnTextWillFindTheTextAndClick()
@@ -36,7 +39,7 @@ class HtmlContextTest extends AbstractTestCase
         $url = $this->server->getUrl('/');
 
         $this->minkSession->visit($url);
-        $this->context->iClickOnTheText('Another Text');
+        $this->context->iClickOnTheText('Another text');
 
         $this->assertEquals('Success', $this->minkSession->getPage()->getContent());
     }
