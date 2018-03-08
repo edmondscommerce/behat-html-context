@@ -4,6 +4,7 @@ namespace EdmondsCommerce\BehatHtmlContext;
 
 
 use Behat\Mink\Mink;
+use EdmondsCommerce\MockServer\MockServer;
 
 class HtmlContextTest extends AbstractTestCase
 {
@@ -12,11 +13,19 @@ class HtmlContextTest extends AbstractTestCase
      */
     private $context;
 
+    /**
+     * @var MockServer
+     */
+    private $server;
+
     public function setUp()
     {
         parent::setUp();
 
         //Set up the mock server
+        $this->server = new MockServer(__DIR__ . '/assets/routers/clickontext.php');
+        $this->server->startServer();
+
         //Set up Mink in the class
         $context = new HTMLContext();
         $context->setMink(new Mink([$this->minkSession]));
@@ -24,8 +33,12 @@ class HtmlContextTest extends AbstractTestCase
 
     public function testClickOnTextWillFindTheTextAndClick()
     {
-        $this->minkSession->visit('https://www.edmondscommerce.co.uk');
-        echo $this->minkSession->getPage()->getContent();
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+        $this->context->iClickOnTheText('Another Text');
+
+        $this->assertEquals('Success', $this->minkSession->getPage()->getContent());
     }
 
     public function testClickOnTextWillFailWhenTextIsNotPresent()
