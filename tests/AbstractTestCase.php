@@ -2,6 +2,8 @@
 
 namespace EdmondsCommerce\BehatHtmlContext;
 
+use Behat\Mink\Driver\Selenium2Driver;
+use Behat\MinkExtension\ServiceContainer\Driver\Selenium2Factory;
 use PHPUnit\Framework\TestCase;
 use Behat\Mink\Driver\GoutteDriver;
 use Behat\Mink\Mink;
@@ -18,7 +20,7 @@ abstract class AbstractTestCase extends TestCase
     public function setUp()
     {
         parent::setUp();
-        $this->setUpMink();
+        $this->setUpSeleniumMink();
     }
 
     protected function setUpMink()
@@ -28,5 +30,25 @@ abstract class AbstractTestCase extends TestCase
         $goutteClient->setClient($guzzle);
         $goutteDriver      = new GoutteDriver($goutteClient);
         $this->minkSession = new Session($goutteDriver);
+    }
+
+    protected function setUpSeleniumMink(bool $headless = true)
+    {
+        $args = [
+            'args' => [
+                '--disable-gpu',
+                '--window-size=1920,1080',
+                '--start-maximised',
+            ],
+        ];
+
+        if ($headless)
+        {
+            $args['args'][] = '--headless';
+        }
+
+        $driver = new Selenium2Driver('chrome', $args);
+
+        $this->minkSession = new Session($driver);
     }
 }
