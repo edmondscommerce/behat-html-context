@@ -101,7 +101,7 @@ class HTMLContext extends RawMinkContext
     {
         $session = $this->getSession();
         $session->executeScript('
-            document.querySelector("body").style.display = "none";
+            document.querySelector("'. $css . '").style.display = "none";
         ');
         $session->wait(5000);
     }

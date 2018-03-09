@@ -163,10 +163,10 @@ class HtmlContextTest extends AbstractTestCase
         $this->context->iHideElement($css);
 
         $visible = $this->minkSession->evaluateScript(
-            "return 'something from browser';"
+            "return document.querySelector('". $css . "').style.display;"
         );
 
-        $hello = true;
+        $this->assertEquals('none', $visible);
     }
 
 
