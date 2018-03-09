@@ -22,7 +22,6 @@ abstract class AbstractTestCase extends TestCase
     {
         parent::setUp();
         $this->setUpSeleniumMink();
-        $this->setContainerIp();
     }
 
     protected function setUpMink()
@@ -55,15 +54,8 @@ abstract class AbstractTestCase extends TestCase
         $this->minkSession = new Session($driver);
     }
 
-    protected function setContainerIp() {
-        $commandToExecute = 'ip addr show eth0 | grep "inet\b" | awk \'{print $2}\' | cut -d/ -f1';
-
-        exec($commandToExecute, $commandOutput, $exitCode);
-
-        $this->containerIp = array_pop($commandOutput);
-    }
-
-    protected function getContainerIp() {
-        return $this->containerIp;
+    protected function getContainerIp()
+    {
+        return getHostByName(getHostName());
     }
 }

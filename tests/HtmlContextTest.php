@@ -18,23 +18,36 @@ class HtmlContextTest extends AbstractTestCase
      */
     private $server;
 
+    /**
+     * @throws \Exception
+     */
     public function setUp()
     {
         parent::setUp();
 
-        // Get container ip
-        $containerIp = $this->getContainerIp();
-
         //Set up the mock server
-        $this->server = new MockServer(__DIR__ . '/assets/routers/clickontext.php', $containerIp);
+        $this->server = new MockServer(__DIR__ . '/assets/routers/clickontext.php', $this->getContainerIp(), 8080);
         $this->server->startServer();
 
         $mink = new Mink(['selenium2' => $this->minkSession]);
         $mink->setDefaultSessionName('selenium2');
+        $this->minkSession->start();
 
         //Set up Mink in the class
         $this->context = new HTMLContext();
         $this->context->setMink($mink);
+    }
+
+    public function tearDown()
+    {
+        parent::tearDown();
+        $this->minkSession->stop();
+        $this->server->stopServer();
+    }
+
+    protected function getUrl(string $uri)
+    {
+        return sprintf('http://%s%s', $this->containerIp, $uri);
     }
 
     public function testClickOnTextWillFindTheTextAndClick()
@@ -74,7 +87,8 @@ class HtmlContextTest extends AbstractTestCase
 
     }
 
-    public function testClickOnFirstVisibleTextThatIsNotPresent() {
+    public function testClickOnFirstVisibleTextThatIsNotPresent()
+    {
         $url = $this->server->getUrl('/not-present');
 
         $this->minkSession->visit($url);
@@ -86,7 +100,8 @@ class HtmlContextTest extends AbstractTestCase
         $this->context->iClickOnTheFirstVisibleText($text);
     }
 
-    public function testClickOnFirstVisibleTextThatIsNotVisible() {
+    public function testClickOnFirstVisibleTextThatIsNotVisible()
+    {
         $url = $this->server->getUrl('/invisible');
 
         $this->minkSession->visit($url);
@@ -98,7 +113,8 @@ class HtmlContextTest extends AbstractTestCase
         $this->context->iClickOnTheFirstVisibleText($text);
     }
 
-    public function testClickOnTheElementThatIsNotPresent() {
+    public function testClickOnTheElementThatIsNotPresent()
+    {
         $url = $this->server->getUrl('/');
 
         $this->minkSession->visit($url);
@@ -110,7 +126,8 @@ class HtmlContextTest extends AbstractTestCase
         $this->context->iClickOnTheElement($css);
     }
 
-    public function testClickOnTheElementWillFindTheElementAndClick() {
+    public function testClickOnTheElementWillFindTheElementAndClick()
+    {
         $url = $this->server->getUrl('/');
 
         $this->minkSession->visit($url);
@@ -122,7 +139,8 @@ class HtmlContextTest extends AbstractTestCase
         $this->assertEquals('Success', $this->minkSession->getPage()->getText());
     }
 
-    public function testScrollToElementWillScrollToElement() {
+    public function testScrollToElementWillScrollToElement()
+    {
 //        $url = $this->server->getUrl('/scroll-test');
 //
 //        $this->minkSession->visit($url);
@@ -134,7 +152,8 @@ class HtmlContextTest extends AbstractTestCase
 //        $currentVerticalOffset = $this->minkSession->evaluateScript("return window.pageYOffset;");
     }
 
-    public function testHideElementWillBeHidden() {
+    public function testHideElementWillBeHidden()
+    {
         $url = $this->server->getUrl('/scroll-test');
 
         $this->minkSession->visit($url);

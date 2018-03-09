@@ -101,7 +101,7 @@ class HTMLContext extends RawMinkContext
     {
         $session = $this->getSession();
         $session->executeScript('
-            $("' . $css . '").hide();
+            document.querySelector("body").style.display = "none";
         ');
         $session->wait(5000);
     }
@@ -400,11 +400,11 @@ class HTMLContext extends RawMinkContext
         $result = [];
 
         /** @var NodeElement $row */
-        foreach($element->findAll( 'css','tr') as $row)
+        foreach ($element->findAll('css', 'tr') as $row)
         {
             $rowResult = [];
             /** @var NodeElement $cell */
-            foreach($row->findAll('css', 'th,td') as $cell)
+            foreach ($row->findAll('css', 'th,td') as $cell)
             {
                 $rowResult[] = $cell->getText();
             }
