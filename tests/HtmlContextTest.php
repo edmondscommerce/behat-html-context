@@ -22,12 +22,15 @@ class HtmlContextTest extends AbstractTestCase
     {
         parent::setUp();
 
+        // Get container ip
+        $containerIp = $this->getContainerIp();
+
         //Set up the mock server
-        $this->server = new MockServer(__DIR__ . '/assets/routers/clickontext.php');
+        $this->server = new MockServer(__DIR__ . '/assets/routers/clickontext.php', $containerIp);
         $this->server->startServer();
 
-        $mink = new Mink(['goutte' => $this->minkSession]);
-        $mink->setDefaultSessionName('goutte');
+        $mink = new Mink(['selenium2' => $this->minkSession]);
+        $mink->setDefaultSessionName('selenium2');
 
         //Set up Mink in the class
         $this->context = new HTMLContext();
@@ -41,21 +44,111 @@ class HtmlContextTest extends AbstractTestCase
         $this->minkSession->visit($url);
         $this->context->iClickOnTheText('Another text');
 
-        $this->assertEquals('Success', $this->minkSession->getPage()->getContent());
+        $this->assertEquals('Success', $this->minkSession->getPage()->getText());
     }
 
     public function testClickOnTextWillFailWhenTextIsNotPresent()
     {
+        $url = $this->server->getUrl('/');
 
+        $this->minkSession->visit($url);
+
+        $text = "Non existant text";
+
+        $this->expectException(\UnexpectedValueException::class);
+
+        $this->context->iClickOnTheText($text);
     }
 
     public function testClickOnFirstTextWillClickOnlyTheFirstText()
     {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $text = "First Visible Text";
+
+        $this->context->iClickOnTheFirstVisibleText($text);
+
+        $this->assertEquals('First Text', $this->minkSession->getPage()->getText());
 
     }
 
-    public function testClickOnFirstTextWillNotClickOnOtherTextInstances()
-    {
+    public function testClickOnFirstVisibleTextThatIsNotPresent() {
+        $url = $this->server->getUrl('/not-present');
 
+        $this->minkSession->visit($url);
+
+        $text = "First Visible Text";
+
+        $this->expectExceptionMessage(sprintf('Cannot find text: "%s"', $text));
+
+        $this->context->iClickOnTheFirstVisibleText($text);
     }
+
+    public function testClickOnFirstVisibleTextThatIsNotVisible() {
+        $url = $this->server->getUrl('/invisible');
+
+        $this->minkSession->visit($url);
+
+        $text = "First Visible Text";
+
+        $this->expectExceptionMessage(sprintf('Cannot find text that is visible: "%s"', $text));
+
+        $this->context->iClickOnTheFirstVisibleText($text);
+    }
+
+    public function testClickOnTheElementThatIsNotPresent() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $css = '#non-existant-element-id';
+
+        $this->expectException(\UnexpectedValueException::class);
+
+        $this->context->iClickOnTheElement($css);
+    }
+
+    public function testClickOnTheElementWillFindTheElementAndClick() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $css = '#success';
+
+        $this->context->iClickOnTheElement($css);
+
+        $this->assertEquals('Success', $this->minkSession->getPage()->getText());
+    }
+
+    public function testScrollToElementWillScrollToElement() {
+//        $url = $this->server->getUrl('/scroll-test');
+//
+//        $this->minkSession->visit($url);
+//
+//        $css = '#success';
+//
+//        $this->context->iScrollTo($css);
+//
+//        $currentVerticalOffset = $this->minkSession->evaluateScript("return window.pageYOffset;");
+    }
+
+    public function testHideElementWillBeHidden() {
+        $url = $this->server->getUrl('/scroll-test');
+
+        $this->minkSession->visit($url);
+
+        $css = '#success';
+
+        $this->context->iHideElement($css);
+
+        $visible = $this->minkSession->evaluateScript(
+            "return 'something from browser';"
+        );
+
+        $hello = true;
+    }
+
+
 }

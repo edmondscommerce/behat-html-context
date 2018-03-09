@@ -22,7 +22,7 @@ class HTMLContext extends RawMinkContext
         );
         if (null === $element)
         {
-            throw new \InvalidArgumentException(sprintf('Cannot find text: "%s"', $text));
+            throw new \UnexpectedValueException(sprintf('Cannot find text: "%s"', $text));
         }
 
         $element->click();
@@ -45,7 +45,7 @@ class HTMLContext extends RawMinkContext
 
         if (count($elements) == 0)
         {
-            throw new \InvalidArgumentException(sprintf('Cannot find text: "%s"', $text));
+            throw new \UnexpectedValueException(sprintf('Cannot find text: "%s"', $text));
         }
 
         foreach ($elements as $element)
@@ -57,7 +57,7 @@ class HTMLContext extends RawMinkContext
             }
         }
 
-        throw new \InvalidArgumentException(sprintf('Cannot find text that is visible: "%s"', $text));
+        throw new \UnexpectedValueException(sprintf('Cannot find text that is visible: "%s"', $text));
     }
 
     /**
@@ -71,7 +71,7 @@ class HTMLContext extends RawMinkContext
         $element = $session->getPage()->find('css', $css);
         if (null === $element)
         {
-            throw new \InvalidArgumentException(sprintf('Cannot find element with css: "%s"', $css));
+            throw new \UnexpectedValueException(sprintf('Cannot find element with css: "%s"', $css));
         }
 
         $element->click();
