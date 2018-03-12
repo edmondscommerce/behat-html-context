@@ -162,6 +162,22 @@ class HTMLContext extends RawMinkContext
     }
 
     /**
+     * More about selector types can be read here http://mink.behat.org/en/latest/guides/traversing-pages.html#selectors
+     *
+     * @Given /^I switch to iframe identified by the following selector type "([^"]*)" and it's value "([^"]*)"$/
+     */
+
+    public function iSwitchToSingleIframeBySelector($selectorType, $locator) {
+        $node = $this->findOneOrFail($selectorType, $locator);
+
+        if (true !== $node->hasAttribute('name')) {
+            throw new \Exception(sprintf('Iframe for specified locator "%s". Has no "name" attribute', $locator));
+        }
+
+        $this->getSession()->switchToIFrame($node->getAttribute('name'));
+    }
+
+    /**
      * @Given /^I switch out of iframe$/
      */
     public function iSwitchOutOfIFrame()

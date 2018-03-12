@@ -606,5 +606,56 @@ JS;
         $this->assertCount(3, $table);
     }
 
+    public function testSwitchToSingleIframeBySelectorUsingCss() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $selector = 'css';
+        $locator = '#test-iframe-identifier';
+
+
+        /* document.querySelector("'. $css . '") */
+        $css = '#iframe-text';
+
+        $this->context->iSwitchToSingleIframeBySelector($selector, $locator);
+
+        $iframeText = $this->minkSession->evaluateScript("return document.querySelector('". $css . "').text");
+
+        $this->assertEquals('IFRAME TEXT', $iframeText);
+    }
+
+    public function testSwitchToSingleIframeBySelectorUsingXpath() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $selector = 'xpath';
+        $locator = '//body/iframe';
+
+
+        /* document.querySelector("'. $css . '") */
+        $css = '#iframe-text';
+
+        $this->context->iSwitchToSingleIframeBySelector($selector, $locator);
+
+        $iframeText = $this->minkSession->evaluateScript("return document.querySelector('". $css . "').text");
+
+        $this->assertEquals('IFRAME TEXT', $iframeText);
+    }
+
+    public function testSwitchToSingleIframeBySelectorWillNotFindTheIframe() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $selector = 'css';
+        $locator = '#test-iframe-identifier2';
+
+        $this->expectException(\Exception::class);
+
+        $this->context->iSwitchToSingleIframeBySelector($selector, $locator);
+
+    }
 
 }
