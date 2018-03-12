@@ -3,6 +3,8 @@
 namespace EdmondsCommerce\BehatHtmlContext;
 
 
+use Behat\Mink\Element\NodeElement;
+use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Mink;
 use EdmondsCommerce\MockServer\MockServer;
 
@@ -139,8 +141,68 @@ class HtmlContextTest extends AbstractTestCase
         $this->assertEquals('Success', $this->minkSession->getPage()->getText());
     }
 
-    public function testScrollToElementWillScrollToElement()
-    {
+    public function testScrollToElementWithIncorrectSelectorTypeWillFail() {
+        $url = $this->server->getUrl('/scroll-test');
+
+        $this->minkSession->visit($url);
+
+        $selectorType = 'data-id';
+        $selector = 'div';
+
+        $this->expectExceptionMessage("Selector type has to be either 'class' or 'id'");
+
+        $this->context->iScrollToElement($selectorType, $selector);
+    }
+
+    public function testScrollToElementWithSelectorPrecededWithDotOrHashWillFail() {
+        $url = $this->server->getUrl('/scroll-test');
+
+        $this->minkSession->visit($url);
+
+        $selectorType = 'id';
+        $selector = '#success';
+
+        $this->expectExceptionMessage("Selector should plain without a . or #");
+
+        $this->context->iScrollToElement($selectorType, $selector);
+    }
+
+    public function testScrollToElementWillScrollToTheElement() {
+        $url = $this->server->getUrl('/scroll-test');
+
+        $this->minkSession->visit($url);
+
+        $selectorType = 'id';
+        $selector = 'success';
+        $fullSelector = '#success';
+
+        $script = <<<JS
+(function () {
+    var el = document.querySelector('$fullSelector');
+    var isInViewport = function (elem) {
+    var bounding = elem.getBoundingClientRect();
+    return (
+        bounding.top >= 0 &&
+        bounding.left >= 0 &&
+        bounding.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        bounding.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+};
+        
+    return isInViewport(el);
+})()
+JS;
+
+
+        $this->context->iScrollToElement($selectorType, $selector);
+
+        $evaluatedScript = $this->minkSession->evaluateScript("return $script");
+
+        $this->assertTrue($evaluatedScript);
+    }
+
+
+    public function testScrollToWillScrollToTheDesiredElement() {
 //        $url = $this->server->getUrl('/scroll-test');
 //
 //        $this->minkSession->visit($url);
@@ -149,7 +211,22 @@ class HtmlContextTest extends AbstractTestCase
 //
 //        $this->context->iScrollTo($css);
 //
-//        $currentVerticalOffset = $this->minkSession->evaluateScript("return window.pageYOffset;");
+//        $script = <<<JS
+//    return document.querySelector("$css").offsetTop;
+//JS;
+//
+//        $script2 = <<<JS
+//    return window.pageYOffset;
+//JS;
+//
+//
+//        $evaluatedScript = $this->minkSession->evaluateScript("$script");
+//
+//        $this->assertTrue($evaluatedScript);
+    }
+
+    public function testMaximiseWindowWillMaximiseWindow() {
+
     }
 
     public function testHideElementWillBeHidden()
@@ -167,6 +244,366 @@ class HtmlContextTest extends AbstractTestCase
         );
 
         $this->assertEquals('none', $visible);
+    }
+
+    public function testMatchElementWillFindTheElement() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $css = '.nested';
+
+        $this->assertTrue($this->context->iMatchTheElement($css));
+    }
+
+    public function testMatchElementWillNotFindAnElement() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $css = '#some-element-that-doesnt-exist';
+
+        $this->expectException(\UnexpectedValueException::class);
+
+        $this->context->iMatchTheElement($css);
+
+    }
+
+    public function testDontMatchTheElementWillNotFindAnElement() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $css = '.non-existant-element';
+
+        $this->assertTrue($this->context->iDontMatchTheElement($css));
+    }
+
+    public function testDontMatchTheElementMatchesTheElement() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $css = '.nested';
+
+        $this->expectException(\UnexpectedValueException::class);
+
+        $this->context->iDontMatchTheElement($css);
+    }
+
+    public function testShouldSeeXorYShouldFindOneOfTheElementsOnly() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $css1 = '#success';
+
+        $css2 = '.non-existent-element';
+
+        $this->assertTrue($this->context->iShouldSeeXorY($css1, $css2));
+    }
+
+    public function testShouldSeeXorYMatchesNoElements() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $css1 = '#success';
+
+        $css2 = '.nested';
+
+        $this->expectException(\Exception::class);
+
+        $this->context->iShouldSeeXorY($css1, $css2);
+    }
+
+    public function testSubmitTheFormSubmitsTheForm() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $id = 'successful-form';
+
+        $this->context->iSubmitTheForm($id);
+
+        $this->assertEquals('Success', $this->minkSession->getPage()->getText());
+    }
+
+    public function testSelectShouldContainValueWillFindASelectWithSpecifiedOptionValue() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $selectName = 'test-select';
+        $optionValue = '2';
+
+        $this->assertTrue($this->context->theSelectShouldContainValue($selectName, $optionValue));
+    }
+
+    public function testSelectShouldContainValueWillNotFindSpecifiedOptionValue() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $selectName = 'test-select';
+        $optionValue = '3';
+
+        $this->expectException(\Exception::class);
+
+        $this->context->theSelectShouldContainValue($selectName, $optionValue);
+    }
+
+    public function testSelectShouldNotContainValueWillFindASelectContainingSpecifiedValue() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $selectName = 'test-select';
+        $optionValue = '3';
+
+        $this->assertTrue($this->context->theSelectShouldNotContainValue($selectName, $optionValue));
+
+    }
+
+    public function testSelectShouldNotContainValueWillNotFindASelectContainingSpecifiedValue() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $selectName = 'test-select';
+        $optionValue = '2';
+
+        $this->expectException(\Exception::class);
+
+        $this->context->theSelectShouldNotContainValue($selectName, $optionValue);
+    }
+
+    public function testTheElementAttributeShouldNotContainValueWillNotFindAnElement() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $css = '#successful-form2';
+        $attribute = 'method';
+        $value = 'POST';
+
+        $this->expectException(\Exception::class);
+
+        $this->context->theElementAttributeShouldNotContainValue($css, $attribute, $value);
+    }
+
+    public function testTheElementAttributeShouldNotContainValueWillContainSpecifiedValue() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $css = '#successful-form';
+        $attribute = 'method';
+        $value = 'POST';
+
+        $this->expectException(\Exception::class);
+
+        $this->context->theElementAttributeShouldNotContainValue($css, $attribute, $value);
+    }
+
+    public function testTheElementAttributeShouldNotContainValueWillNotContainSpecifiedValue() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $css = '#successful-form';
+        $attribute = 'method';
+        $value = 'SOMERANDOMVALUE';
+
+        $this->assertNotContains($value, $this->context->theElementAttributeShouldNotContainValue($css, $attribute, $value));
+    }
+
+    public function testFindOneOrFailWillFindOneElement() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $selector = 'css';
+        $locator = 'li.nested';
+
+        $element = $this->context->findOneOrFail($selector, $locator);
+
+        $this->assertEquals('Nested', $element->getHtml());
+    }
+
+    public function testFindOneOrFailWillFailToFindOneElement() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $selector = 'css';
+        $locator = 'li.non-existant-class';
+
+        $this->expectException(ExpectationException::class);
+
+        $this->context->findOneOrFail($selector, $locator);
+    }
+
+    /**
+     * Test that #iframe-text will return different text depending if DOM reference is pointing to iframe or not
+     */
+
+    public function testSwitchToSingleIframeWillSwitchDomReferenceToThatIframe() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        /* document.querySelector("'. $css . '") */
+        $css = '#iframe-text';
+
+        $text = $this->minkSession->evaluateScript("return document.querySelector('". $css . "').text");
+
+        $iframeName = 'test-iframe';
+
+        $this->context->iSwitchToSingleIframe($iframeName);
+
+        $iframeText = $this->minkSession->evaluateScript("return document.querySelector('". $css . "').text");
+
+        $this->assertEquals('IFRAME TEXT', $iframeText);
+    }
+
+    /**
+     * Test that #iframe-text DOM reference will not longer point to that specific iframe, after switching out
+     */
+
+    public function testSwitchOutOfIFrameWillSwitchDomReferenceNotToPointToThatIframe() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        /* document.querySelector("'. $css . '") */
+        $css = '#iframe-text';
+
+        $text = $this->minkSession->evaluateScript("return document.querySelector('". $css . "').text");
+
+        $iframeName = 'test-iframe';
+
+        $this->context->iSwitchToSingleIframe($iframeName);
+        $this->context->iSwitchOutOfIFrame();
+
+        $iframeText = $this->minkSession->evaluateScript("return document.querySelector('". $css . "').text");
+
+        $this->assertEquals('NOT IFRAME TEXT', $iframeText);
+    }
+
+    public function testWaitForMilliseconds() {
+//        $url = $this->server->getUrl('/');
+//
+//        $this->minkSession->visit($url);
+//
+//        $startTime = microtime(true);
+//        $this->context->waitformilliseconds(3000);
+//        $endTime = microtime(true);
+//
+//        $timeElapsed = $endTime - $startTime;
+    }
+
+    public function testFindAllOrFailWillNotFindAnyElements() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $selector = 'css';
+        $locator = 'section'; # <section></section> HTML tag
+
+        $this->expectException(ExpectationException::class);
+
+        $this->context->findAllOrFail($selector, $locator);
+
+    }
+
+    public function testFindAllOrFailWillFindAllElementsSpecifiedByLocator() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $selector = 'css';
+        $locator = 'ul'; # <section></section> HTML tag
+
+
+        $elements = $this->context->findAllOrFail($selector, $locator);
+
+        $this->assertCount(2, $elements);
+
+    }
+
+    public function testFindOrFailFromNodeWillFindAnElement() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $elementXpath = '/html/body/ul[2]';
+        $element = new NodeElement($elementXpath, $this->minkSession);
+        $selector = 'css';
+        $locator = 'li.nested';
+
+        $node = $this->context->findOrFailFromNode($element, $selector, $locator);
+
+        $this->assertEquals('Nested', $node->getHtml());
+
+    }
+
+    public function testFindOrFailFromNodeWillFailToFindAnElement() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $elementXpath = '/html/body/ul[2]';
+        $element = new NodeElement($elementXpath, $this->minkSession);
+        $selector = 'css';
+        $locator = 'li.non-existent-nested';
+
+        $this->expectException(ExpectationException::class);
+
+        $this->context->findOrFailFromNode($element, $selector, $locator);
+    }
+
+    public function testFindAllOrFailFromNodeWillFindElements() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $elementXpath = '/html/body/ul[2]';
+        $element = new NodeElement($elementXpath, $this->minkSession);
+        $selector = 'css';
+        $locator = 'li';
+
+        $elements = $this->context->findAllOrFailFromNode($element, $selector, $locator);
+
+        $this->assertCount(4, $elements);
+    }
+
+    public function testFindAllOrFailFromNodeWillFailToFindElements() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $elementXpath = '/html/body/ul[2]';
+        $element = new NodeElement($elementXpath, $this->minkSession);
+        $selector = 'css';
+        $locator = 'li.non-existent-nested';
+
+        $this->expectException(ExpectationException::class);
+
+        $this->context->findAllOrFailFromNode($element, $selector, $locator);
+    }
+
+    public function testGetTableWillExtractTableValuesFromNodeElementToArray() {
+        $url = $this->server->getUrl('/table');
+
+        $this->minkSession->visit($url);
+
+        $elementXpath = '';
+        $element = new NodeElement($elementXpath, $this->minkSession);
+
+        $table = $this->context->getTable($element);
+
+        $this->assertCount(3, $table);
     }
 
 

@@ -79,15 +79,19 @@ class HTMLContext extends RawMinkContext
 
     /**
      * Scroll to element with CSS
-     *
+     * @todo Test needs to be written
      * @When /^I scroll to "([^"]*)"$/
      */
     public function iScrollTo($css)
     {
         $session = $this->getSession();
         $session->executeScript('
-            var $elem = jQuery("' . $css . '");
-            var position = $elem.position();
+            var $elem = document.querySelector("' . $css . '");
+            var position = {
+                left: $elem.offsetLeft,
+                top: $elem.offsetTop
+            };
+           
             window.scrollTo(position.left, position.top);
         ');
     }
@@ -116,8 +120,10 @@ class HTMLContext extends RawMinkContext
         $element = $session->getPage()->find('css', $css);
         if (null === $element)
         {
-            throw new \InvalidArgumentException(sprintf('Cannot find element with css: "%s"', $css));
+            throw new \UnexpectedValueException(sprintf('Cannot find element with css: "%s"', $css));
         }
+
+        return true;
     }
 
     /**
@@ -130,12 +136,15 @@ class HTMLContext extends RawMinkContext
         $element = $session->getPage()->find('css', $css);
         if (null !== $element)
         {
-            throw new \InvalidArgumentException(sprintf('Found element with css: "%s"', $css));
+            throw new \UnexpectedValueException(sprintf('Found element with css: "%s"', $css));
         }
+
+        return true;
     }
 
 
     /**
+     * @todo Test needs to be written
      * @Then /^I maximize browser window size$/
      * @throws Exception
      */
@@ -161,6 +170,7 @@ class HTMLContext extends RawMinkContext
     }
 
     /**
+     * @todo Test needs to be written
      * @When I wait :arg1 milliseconds
      */
     public function waitformilliseconds($mseconds)
@@ -231,7 +241,7 @@ class HTMLContext extends RawMinkContext
     public function theSelectShouldContainValue($name, $value)
     {
 
-        $select = $elements1 = $this->getSession()
+        $select = $this->getSession()
             ->getPage()
             ->find("named", array('select', $name));
         if ($select->has('named', array('option', $value)))
@@ -250,7 +260,7 @@ class HTMLContext extends RawMinkContext
     public function theSelectShouldNotContainValue($name, $value)
     {
 
-        $select = $elements1 = $this->getSession()
+        $select = $this->getSession()
             ->getPage()
             ->find("named", array('select', $name));
         if (!$select->has('named', array('option', $value)))
@@ -259,30 +269,6 @@ class HTMLContext extends RawMinkContext
         }
 
         throw new Exception('Element ' . $name . ' should not contain an option named ' . $value . " but one was found");
-
-    }
-
-    /**
-     * @Then the element :css attribute :attribute should contain :value
-     * @throws Exception
-     */
-    public function theElementAttributeShoudldNotContainValue($css, $attribute, $value)
-    {
-        $element = $this->getSession()
-            ->getPage()
-            ->find("css", $css);
-
-        if (is_null($element))
-        {
-            throw new Exception("No element matching the CSS " . $css . " was found");
-        }
-
-        $attributeValue = $element->getAttribute($attribute);
-
-        if (strpos($attributeValue, $value) === false)
-        {
-            throw new Exception("The element " . $css . "'s attribute " . $attribute . " doesn't contain " . $value);
-        }
 
     }
 
@@ -305,8 +291,10 @@ class HTMLContext extends RawMinkContext
 
         if (strpos($attributeValue, $value) !== false)
         {
-            throw new Exception("The element " . $css . "'s attribute " . $attribute . " doesn't contain " . $value);
+            throw new Exception("The element " . $css . "'s attribute " . $attribute . " contains " . $value);
         }
+
+        return $attributeValue;
     }
 
     /**
