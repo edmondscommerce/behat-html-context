@@ -144,7 +144,6 @@ class HTMLContext extends RawMinkContext
 
 
     /**
-     * @todo Test needs to be written
      * @Then /^I maximize browser window size$/
      * @throws Exception
      */
