@@ -203,26 +203,36 @@ JS;
 
 
     public function testScrollToWillScrollToTheDesiredElement() {
-//        $url = $this->server->getUrl('/scroll-test');
-//
-//        $this->minkSession->visit($url);
-//
-//        $css = '#success';
-//
-//        $this->context->iScrollTo($css);
-//
-//        $script = <<<JS
-//    return document.querySelector("$css").offsetTop;
-//JS;
-//
-//        $script2 = <<<JS
-//    return window.pageYOffset;
-//JS;
-//
-//
-//        $evaluatedScript = $this->minkSession->evaluateScript("$script");
-//
-//        $this->assertTrue($evaluatedScript);
+        $url = $this->server->getUrl('/scroll-test');
+
+        $this->minkSession->visit($url);
+
+        $css = '#success';
+
+        $this->context->iScrollTo($css);
+
+        $script = <<<JS
+(function () {
+    var el = document.querySelector('$css');
+    var isInViewport = function (elem) {
+    var bounding = elem.getBoundingClientRect();
+    return (
+        bounding.top >= 0 &&
+        bounding.left >= 0 &&
+        bounding.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        bounding.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+};
+        
+    return isInViewport(el);
+})()
+JS;
+
+        $this->context->iScrollTo($css);
+
+        $evaluatedScript = $this->minkSession->evaluateScript("return $script");
+
+        $this->assertTrue($evaluatedScript);
     }
 
     public function testMaximiseWindowWillMaximiseWindow() {
@@ -500,15 +510,17 @@ JS;
     }
 
     public function testWaitForMilliseconds() {
-//        $url = $this->server->getUrl('/');
-//
-//        $this->minkSession->visit($url);
-//
-//        $startTime = microtime(true);
-//        $this->context->waitformilliseconds(3000);
-//        $endTime = microtime(true);
-//
-//        $timeElapsed = $endTime - $startTime;
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $startTime = microtime(true);
+        $this->context->waitformilliseconds(1000);
+        $endTime = microtime(true);
+
+        $timeElapsed = ( $endTime - $startTime ) * 1000; // in ms
+
+        $this->assertEquals((float)1000, (float) $timeElapsed, '', 50); // Adding 50ms error cap
     }
 
     public function testFindAllOrFailWillNotFindAnyElements() {

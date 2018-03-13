@@ -79,7 +79,6 @@ class HTMLContext extends RawMinkContext
 
     /**
      * Scroll to element with CSS
-     * @todo Test needs to be written
      * @When /^I scroll to "([^"]*)"$/
      */
     public function iScrollTo($css)
@@ -197,7 +196,6 @@ class HTMLContext extends RawMinkContext
     }
 
     /**
-     * @todo Test needs to be written
      * @When I wait :arg1 milliseconds
      */
     public function waitformilliseconds($mseconds)
