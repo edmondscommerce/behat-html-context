@@ -15,23 +15,19 @@ abstract class AbstractTestCase extends TestCase
     /**
      * @var Session
      */
-    protected $minkSession;
+    protected $seleniumSession;
+
+    /**
+     * @var Session
+     */
+    protected $goutteSession;
     protected $containerIp;
 
     public function setUp()
     {
         parent::setUp();
         $this->setUpSeleniumMink();
-    }
-
-    protected function setUpMink()
-    {
-        $guzzle       = new Client();
-        $goutteClient = new \Goutte\Client();
-        $goutteClient->setClient($guzzle);
-        $goutteDriver      = new GoutteDriver($goutteClient);
-        $this->minkSession = new Session($goutteDriver);
-
+        $this->setUpGoutteMink();
     }
 
     protected function setUpSeleniumMink(bool $headless = true)
@@ -51,7 +47,15 @@ abstract class AbstractTestCase extends TestCase
 
         $driver = new Selenium2Driver('chrome', $args);
 
-        $this->minkSession = new Session($driver);
+        $this->seleniumSession = new Session($driver);
+    }
+
+    protected function setUpGoutteMink() {
+        $guzzle       = new Client();
+        $goutteClient = new \Goutte\Client();
+        $goutteClient->setClient($guzzle);
+        $goutteDriver      = new GoutteDriver($goutteClient);
+        $this->goutteSession = new Session($goutteDriver);
     }
 
     protected function getContainerIp()

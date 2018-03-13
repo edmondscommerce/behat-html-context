@@ -31,9 +31,9 @@ class HtmlContextTest extends AbstractTestCase
         $this->server = new MockServer(__DIR__ . '/assets/routers/clickontext.php', $this->getContainerIp(), 8080);
         $this->server->startServer();
 
-        $mink = new Mink(['selenium2' => $this->minkSession]);
+        $mink = new Mink(['selenium2' => $this->seleniumSession]);
         $mink->setDefaultSessionName('selenium2');
-        $this->minkSession->start();
+        $this->seleniumSession->start();
 
         //Set up Mink in the class
         $this->context = new HTMLContext();
@@ -43,7 +43,7 @@ class HtmlContextTest extends AbstractTestCase
     public function tearDown()
     {
         parent::tearDown();
-        $this->minkSession->stop();
+        $this->seleniumSession->stop();
         $this->server->stopServer();
     }
 
@@ -56,17 +56,17 @@ class HtmlContextTest extends AbstractTestCase
     {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
         $this->context->iClickOnTheText('Another text');
 
-        $this->assertEquals('Success', $this->minkSession->getPage()->getText());
+        $this->assertEquals('Success', $this->seleniumSession->getPage()->getText());
     }
 
     public function testClickOnTextWillFailWhenTextIsNotPresent()
     {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $text = "Non existant text";
 
@@ -79,13 +79,13 @@ class HtmlContextTest extends AbstractTestCase
     {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $text = "First Visible Text";
 
         $this->context->iClickOnTheFirstVisibleText($text);
 
-        $this->assertEquals('First Text', $this->minkSession->getPage()->getText());
+        $this->assertEquals('First Text', $this->seleniumSession->getPage()->getText());
 
     }
 
@@ -93,7 +93,7 @@ class HtmlContextTest extends AbstractTestCase
     {
         $url = $this->server->getUrl('/not-present');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $text = "First Visible Text";
 
@@ -106,7 +106,7 @@ class HtmlContextTest extends AbstractTestCase
     {
         $url = $this->server->getUrl('/invisible');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $text = "First Visible Text";
 
@@ -119,7 +119,7 @@ class HtmlContextTest extends AbstractTestCase
     {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $css = '#non-existant-element-id';
 
@@ -132,19 +132,19 @@ class HtmlContextTest extends AbstractTestCase
     {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $css = '#success';
 
         $this->context->iClickOnTheElement($css);
 
-        $this->assertEquals('Success', $this->minkSession->getPage()->getText());
+        $this->assertEquals('Success', $this->seleniumSession->getPage()->getText());
     }
 
     public function testScrollToElementWithIncorrectSelectorTypeWillFail() {
         $url = $this->server->getUrl('/scroll-test');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $selectorType = 'data-id';
         $selector = 'div';
@@ -157,7 +157,7 @@ class HtmlContextTest extends AbstractTestCase
     public function testScrollToElementWithSelectorPrecededWithDotOrHashWillFail() {
         $url = $this->server->getUrl('/scroll-test');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $selectorType = 'id';
         $selector = '#success';
@@ -170,7 +170,7 @@ class HtmlContextTest extends AbstractTestCase
     public function testScrollToElementWillScrollToTheElement() {
         $url = $this->server->getUrl('/scroll-test');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $selectorType = 'id';
         $selector = 'success';
@@ -196,7 +196,7 @@ JS;
 
         $this->context->iScrollToElement($selectorType, $selector);
 
-        $evaluatedScript = $this->minkSession->evaluateScript("return $script");
+        $evaluatedScript = $this->seleniumSession->evaluateScript("return $script");
 
         $this->assertTrue($evaluatedScript);
     }
@@ -205,7 +205,7 @@ JS;
     public function testScrollToWillScrollToTheDesiredElement() {
         $url = $this->server->getUrl('/scroll-test');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $css = '#success';
 
@@ -230,7 +230,7 @@ JS;
 
         $this->context->iScrollTo($css);
 
-        $evaluatedScript = $this->minkSession->evaluateScript("return $script");
+        $evaluatedScript = $this->seleniumSession->evaluateScript("return $script");
 
         $this->assertTrue($evaluatedScript);
     }
@@ -238,11 +238,11 @@ JS;
     public function testMaximiseWindowWillMaximiseWindow() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $this->context->maximiseWindow();
 
-        $windowState = $this->minkSession->evaluateScript("return !window.screenTop && !window.screenY;");
+        $windowState = $this->seleniumSession->evaluateScript("return !window.screenTop && !window.screenY;");
 
         $this->assertEquals(1, $windowState);
     }
@@ -251,13 +251,13 @@ JS;
     {
         $url = $this->server->getUrl('/scroll-test');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $css = '#success';
 
         $this->context->iHideElement($css);
 
-        $visible = $this->minkSession->evaluateScript(
+        $visible = $this->seleniumSession->evaluateScript(
             "return document.querySelector('". $css . "').style.display;"
         );
 
@@ -267,7 +267,7 @@ JS;
     public function testMatchElementWillFindTheElement() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $css = '.nested';
 
@@ -277,7 +277,7 @@ JS;
     public function testMatchElementWillNotFindAnElement() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $css = '#some-element-that-doesnt-exist';
 
@@ -290,7 +290,7 @@ JS;
     public function testDontMatchTheElementWillNotFindAnElement() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $css = '.non-existant-element';
 
@@ -300,7 +300,7 @@ JS;
     public function testDontMatchTheElementMatchesTheElement() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $css = '.nested';
 
@@ -312,7 +312,7 @@ JS;
     public function testShouldSeeXorYShouldFindOneOfTheElementsOnly() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $css1 = '#success';
 
@@ -324,7 +324,7 @@ JS;
     public function testShouldSeeXorYMatchesNoElements() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $css1 = '#success';
 
@@ -338,19 +338,19 @@ JS;
     public function testSubmitTheFormSubmitsTheForm() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $id = 'successful-form';
 
         $this->context->iSubmitTheForm($id);
 
-        $this->assertEquals('Success', $this->minkSession->getPage()->getText());
+        $this->assertEquals('Success', $this->seleniumSession->getPage()->getText());
     }
 
     public function testSelectShouldContainValueWillFindASelectWithSpecifiedOptionValue() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $selectName = 'test-select';
         $optionValue = '2';
@@ -361,7 +361,7 @@ JS;
     public function testSelectShouldContainValueWillNotFindSpecifiedOptionValue() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $selectName = 'test-select';
         $optionValue = '3';
@@ -374,7 +374,7 @@ JS;
     public function testSelectShouldNotContainValueWillFindASelectContainingSpecifiedValue() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $selectName = 'test-select';
         $optionValue = '3';
@@ -386,7 +386,7 @@ JS;
     public function testSelectShouldNotContainValueWillNotFindASelectContainingSpecifiedValue() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $selectName = 'test-select';
         $optionValue = '2';
@@ -399,7 +399,7 @@ JS;
     public function testTheElementAttributeShouldNotContainValueWillNotFindAnElement() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $css = '#successful-form2';
         $attribute = 'method';
@@ -413,7 +413,7 @@ JS;
     public function testTheElementAttributeShouldNotContainValueWillContainSpecifiedValue() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $css = '#successful-form';
         $attribute = 'method';
@@ -427,7 +427,7 @@ JS;
     public function testTheElementAttributeShouldNotContainValueWillNotContainSpecifiedValue() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $css = '#successful-form';
         $attribute = 'method';
@@ -439,7 +439,7 @@ JS;
     public function testFindOneOrFailWillFindOneElement() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $selector = 'css';
         $locator = 'li.nested';
@@ -452,7 +452,7 @@ JS;
     public function testFindOneOrFailWillFailToFindOneElement() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $selector = 'css';
         $locator = 'li.non-existant-class';
@@ -469,18 +469,18 @@ JS;
     public function testSwitchToSingleIframeWillSwitchDomReferenceToThatIframe() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         /* document.querySelector("'. $css . '") */
         $css = '#iframe-text';
 
-        $text = $this->minkSession->evaluateScript("return document.querySelector('". $css . "').text");
+        $text = $this->seleniumSession->evaluateScript("return document.querySelector('". $css . "').text");
 
         $iframeName = 'test-iframe';
 
         $this->context->iSwitchToSingleIframe($iframeName);
 
-        $iframeText = $this->minkSession->evaluateScript("return document.querySelector('". $css . "').text");
+        $iframeText = $this->seleniumSession->evaluateScript("return document.querySelector('". $css . "').text");
 
         $this->assertEquals('IFRAME TEXT', $iframeText);
     }
@@ -492,19 +492,19 @@ JS;
     public function testSwitchOutOfIFrameWillSwitchDomReferenceNotToPointToThatIframe() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         /* document.querySelector("'. $css . '") */
         $css = '#iframe-text';
 
-        $text = $this->minkSession->evaluateScript("return document.querySelector('". $css . "').text");
+        $text = $this->seleniumSession->evaluateScript("return document.querySelector('". $css . "').text");
 
         $iframeName = 'test-iframe';
 
         $this->context->iSwitchToSingleIframe($iframeName);
         $this->context->iSwitchOutOfIFrame();
 
-        $iframeText = $this->minkSession->evaluateScript("return document.querySelector('". $css . "').text");
+        $iframeText = $this->seleniumSession->evaluateScript("return document.querySelector('". $css . "').text");
 
         $this->assertEquals('NOT IFRAME TEXT', $iframeText);
     }
@@ -512,7 +512,7 @@ JS;
     public function testWaitForMilliseconds() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $startTime = microtime(true);
         $this->context->waitformilliseconds(1000);
@@ -526,7 +526,7 @@ JS;
     public function testFindAllOrFailWillNotFindAnyElements() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $selector = 'css';
         $locator = 'section'; # <section></section> HTML tag
@@ -540,7 +540,7 @@ JS;
     public function testFindAllOrFailWillFindAllElementsSpecifiedByLocator() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $selector = 'css';
         $locator = 'ul'; # <section></section> HTML tag
@@ -555,10 +555,10 @@ JS;
     public function testFindOrFailFromNodeWillFindAnElement() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $elementXpath = '/html/body/ul[2]';
-        $element = new NodeElement($elementXpath, $this->minkSession);
+        $element = new NodeElement($elementXpath, $this->seleniumSession);
         $selector = 'css';
         $locator = 'li.nested';
 
@@ -571,10 +571,10 @@ JS;
     public function testFindOrFailFromNodeWillFailToFindAnElement() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $elementXpath = '/html/body/ul[2]';
-        $element = new NodeElement($elementXpath, $this->minkSession);
+        $element = new NodeElement($elementXpath, $this->seleniumSession);
         $selector = 'css';
         $locator = 'li.non-existent-nested';
 
@@ -586,10 +586,10 @@ JS;
     public function testFindAllOrFailFromNodeWillFindElements() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $elementXpath = '/html/body/ul[2]';
-        $element = new NodeElement($elementXpath, $this->minkSession);
+        $element = new NodeElement($elementXpath, $this->seleniumSession);
         $selector = 'css';
         $locator = 'li';
 
@@ -601,10 +601,10 @@ JS;
     public function testFindAllOrFailFromNodeWillFailToFindElements() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $elementXpath = '/html/body/ul[2]';
-        $element = new NodeElement($elementXpath, $this->minkSession);
+        $element = new NodeElement($elementXpath, $this->seleniumSession);
         $selector = 'css';
         $locator = 'li.non-existent-nested';
 
@@ -616,10 +616,10 @@ JS;
     public function testGetTableWillExtractTableValuesFromNodeElementToArray() {
         $url = $this->server->getUrl('/table');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $elementXpath = '';
-        $element = new NodeElement($elementXpath, $this->minkSession);
+        $element = new NodeElement($elementXpath, $this->seleniumSession);
 
         $table = $this->context->getTable($element);
 
@@ -629,7 +629,7 @@ JS;
     public function testSwitchToSingleIframeBySelectorUsingCss() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $selector = 'css';
         $locator = '#test-iframe-identifier';
@@ -640,7 +640,7 @@ JS;
 
         $this->context->iSwitchToSingleIframeBySelector($selector, $locator);
 
-        $iframeText = $this->minkSession->evaluateScript("return document.querySelector('". $css . "').text");
+        $iframeText = $this->seleniumSession->evaluateScript("return document.querySelector('". $css . "').text");
 
         $this->assertEquals('IFRAME TEXT', $iframeText);
     }
@@ -648,7 +648,7 @@ JS;
     public function testSwitchToSingleIframeBySelectorUsingXpath() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $selector = 'xpath';
         $locator = '//body/iframe';
@@ -659,7 +659,7 @@ JS;
 
         $this->context->iSwitchToSingleIframeBySelector($selector, $locator);
 
-        $iframeText = $this->minkSession->evaluateScript("return document.querySelector('". $css . "').text");
+        $iframeText = $this->seleniumSession->evaluateScript("return document.querySelector('". $css . "').text");
 
         $this->assertEquals('IFRAME TEXT', $iframeText);
     }
@@ -667,7 +667,7 @@ JS;
     public function testSwitchToSingleIframeBySelectorWillNotFindTheIframe() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $selector = 'css';
         $locator = '#test-iframe-identifier3';
@@ -681,7 +681,7 @@ JS;
     public function testSwitchToSingleIframeBySelectorUsingXpathWithoutIframeName() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $selector = 'xpath';
         $locator = '//body/iframe[3]';
@@ -689,7 +689,7 @@ JS;
 
         $this->context->iSwitchToSingleIframeBySelector($selector, $locator);
 
-        $iframeText = $this->minkSession->evaluateScript("return document.querySelector('". $css . "').text");
+        $iframeText = $this->seleniumSession->evaluateScript("return document.querySelector('". $css . "').text");
 
         $this->assertEquals('IFRAME TEXT TEST 2', $iframeText);
     }
@@ -697,7 +697,7 @@ JS;
     public function testSwitchToSingleIframeBySelectorUsingCssWithoutIframeName() {
         $url = $this->server->getUrl('/');
 
-        $this->minkSession->visit($url);
+        $this->seleniumSession->visit($url);
 
         $selector = 'css';
         $locator = '.test-iframe-class';
@@ -705,7 +705,7 @@ JS;
 
         $this->context->iSwitchToSingleIframeBySelector($selector, $locator);
 
-        $iframeText = $this->minkSession->evaluateScript("return document.querySelector('". $css . "').text");
+        $iframeText = $this->seleniumSession->evaluateScript("return document.querySelector('". $css . "').text");
 
         $this->assertEquals('IFRAME TEXT TEST', $iframeText);
     }

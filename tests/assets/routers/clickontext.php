@@ -15,6 +15,4 @@ $router->addStaticRoute('/iframe-test', __DIR__ . "/html/iframeTest.html");
 $router->addStaticRoute('/iframe-test2', __DIR__ . "/html/iframeTest2.html");
 
 
-
-
 $router->run()->send();
