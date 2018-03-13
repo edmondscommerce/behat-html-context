@@ -169,12 +169,24 @@ class HTMLContext extends RawMinkContext
 
     public function iSwitchToSingleIframeBySelector($selectorType, $locator) {
         $node = $this->findOneOrFail($selectorType, $locator);
+        $session = $this->getSession();
+
+        $nameAttributeValue = $node->getAttribute('name');
 
         if (true !== $node->hasAttribute('name')) {
-            throw new \Exception(sprintf('Iframe for specified locator "%s". Has no "name" attribute', $locator));
+            $nameAttributeValue = 'js-test-iframe';
+
+            switch ($selectorType) {
+                case 'css':
+                    $session->executeScript("document.querySelector('" . $locator . "').setAttribute('name', '" . $nameAttributeValue . "');");
+                    break;
+                case 'xpath':
+                    $session->executeScript("document.evaluate('" . $locator . "', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.setAttribute('name', '" . $nameAttributeValue . "');");
+                    break;
+            }
         }
 
-        $this->getSession()->switchToIFrame($node->getAttribute('name'));
+        $session->switchToIFrame($nameAttributeValue);
     }
 
     /**

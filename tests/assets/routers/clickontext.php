@@ -11,6 +11,9 @@ $router->addStaticRoute('/', __DIR__ . "/html/textSearch.html");
 $router->addStaticRoute('/invisible', __DIR__ . "/html/invisible.html");
 $router->addStaticRoute('/scroll-test', __DIR__ . "/html/scroll-test.html");
 $router->addStaticRoute('/table', __DIR__ . "/html/table.html");
+$router->addStaticRoute('/iframe-test', __DIR__ . "/html/iframeTest.html");
+$router->addStaticRoute('/iframe-test2', __DIR__ . "/html/iframeTest2.html");
+
 
 
 

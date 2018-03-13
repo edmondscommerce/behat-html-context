@@ -650,12 +650,44 @@ JS;
         $this->minkSession->visit($url);
 
         $selector = 'css';
-        $locator = '#test-iframe-identifier2';
+        $locator = '#test-iframe-identifier3';
 
         $this->expectException(\Exception::class);
 
         $this->context->iSwitchToSingleIframeBySelector($selector, $locator);
 
+    }
+
+    public function testSwitchToSingleIframeBySelectorUsingXpathWithoutIframeName() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $selector = 'xpath';
+        $locator = '//body/iframe[3]';
+        $css = '#iframe-text';
+
+        $this->context->iSwitchToSingleIframeBySelector($selector, $locator);
+
+        $iframeText = $this->minkSession->evaluateScript("return document.querySelector('". $css . "').text");
+
+        $this->assertEquals('IFRAME TEXT TEST 2', $iframeText);
+    }
+
+    public function testSwitchToSingleIframeBySelectorUsingCssWithoutIframeName() {
+        $url = $this->server->getUrl('/');
+
+        $this->minkSession->visit($url);
+
+        $selector = 'css';
+        $locator = '.test-iframe-class';
+        $css = '#iframe-text';
+
+        $this->context->iSwitchToSingleIframeBySelector($selector, $locator);
+
+        $iframeText = $this->minkSession->evaluateScript("return document.querySelector('". $css . "').text");
+
+        $this->assertEquals('IFRAME TEXT TEST', $iframeText);
     }
 
 }
