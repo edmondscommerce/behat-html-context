@@ -226,7 +226,15 @@ JS;
     }
 
     public function testMaximiseWindowWillMaximiseWindow() {
+        $url = $this->server->getUrl('/');
 
+        $this->minkSession->visit($url);
+
+        $this->context->maximiseWindow();
+
+        $windowState = $this->minkSession->evaluateScript("return !window.screenTop && !window.screenY;");
+
+        $this->assertEquals(1, $windowState);
     }
 
     public function testHideElementWillBeHidden()
