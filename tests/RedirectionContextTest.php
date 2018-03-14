@@ -50,6 +50,8 @@ class RedirectionContextTest extends AbstractTestCase
 
         $this->expectException(UnsupportedDriverActionException::class);
 
+        /** @noinspection PhpDeprecationInspection */
+        /** @noinspection PhpUnhandledExceptionInspection */
         $context->canIntercept();
     }
 }

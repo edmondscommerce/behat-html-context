@@ -75,7 +75,7 @@ class HtmlContextTest extends AbstractTestCase
 
         $this->seleniumSession->visit($url);
 
-        $text = "Non existant text";
+        $text = 'Non existant text';
 
         $this->expectException(\UnexpectedValueException::class);
 
@@ -88,7 +88,7 @@ class HtmlContextTest extends AbstractTestCase
 
         $this->seleniumSession->visit($url);
 
-        $text = "First Visible Text";
+        $text = 'First Visible Text';
 
         $this->context->iClickOnTheFirstVisibleText($text);
 
@@ -101,7 +101,7 @@ class HtmlContextTest extends AbstractTestCase
 
         $this->seleniumSession->visit($url);
 
-        $text = "First Visible Text";
+        $text = 'First Visible Text';
 
         $this->expectExceptionMessage(sprintf('Cannot find text: "%s"', $text));
 
@@ -114,7 +114,7 @@ class HtmlContextTest extends AbstractTestCase
 
         $this->seleniumSession->visit($url);
 
-        $text = "First Visible Text";
+        $text = 'First Visible Text';
 
         $this->expectExceptionMessage(sprintf('Cannot find text that is visible: "%s"', $text));
 
@@ -170,7 +170,7 @@ class HtmlContextTest extends AbstractTestCase
         $selectorType = 'id';
         $selector = '#success';
 
-        $this->expectExceptionMessage("Selector should plain without a . or #");
+        $this->expectExceptionMessage('Selector should plain without a . or #');
 
         $this->context->iScrollToElement($selectorType, $selector);
     }
@@ -251,9 +251,10 @@ JS;
 
         $this->seleniumSession->visit($url);
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $this->context->maximiseWindow();
 
-        $windowState = $this->seleniumSession->evaluateScript("return !window.screenTop && !window.screenY;");
+        $windowState = $this->seleniumSession->evaluateScript('return !window.screenTop && !window.screenY;');
 
         $this->assertEquals(1, $windowState);
     }
@@ -470,6 +471,7 @@ JS;
         $selector = 'css';
         $locator = 'li.nested';
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $element = $this->context->findOneOrFail($selector, $locator);
 
         $this->assertEquals('Nested', $element->getHtml());
@@ -486,6 +488,7 @@ JS;
 
         $this->expectException(ExpectationException::class);
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $this->context->findOneOrFail($selector, $locator);
     }
 
@@ -560,6 +563,7 @@ JS;
 
         $this->expectException(ExpectationException::class);
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $this->context->findAllOrFail($selector, $locator);
     }
 
@@ -573,6 +577,7 @@ JS;
         $locator = 'ul'; # <section></section> HTML tag
 
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $elements = $this->context->findAllOrFail($selector, $locator);
 
         $this->assertCount(2, $elements);
@@ -589,6 +594,7 @@ JS;
         $selector = 'css';
         $locator = 'li.nested';
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $node = $this->context->findOrFailFromNode($element, $selector, $locator);
 
         $this->assertEquals('Nested', $node->getHtml());
@@ -607,6 +613,7 @@ JS;
 
         $this->expectException(ExpectationException::class);
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $this->context->findOrFailFromNode($element, $selector, $locator);
     }
 
@@ -621,6 +628,7 @@ JS;
         $selector = 'css';
         $locator = 'li';
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $elements = $this->context->findAllOrFailFromNode($element, $selector, $locator);
 
         $this->assertCount(4, $elements);
@@ -639,6 +647,7 @@ JS;
 
         $this->expectException(ExpectationException::class);
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $this->context->findAllOrFailFromNode($element, $selector, $locator);
     }
 
@@ -669,6 +678,7 @@ JS;
         /* document.querySelector("'. $css . '") */
         $css = '#iframe-text';
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $this->context->iSwitchToSingleIframeBySelector($selector, $locator);
 
         $iframeText = $this->seleniumSession->evaluateScript("return document.querySelector('". $css . "').text");
@@ -689,6 +699,7 @@ JS;
         /* document.querySelector("'. $css . '") */
         $css = '#iframe-text';
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $this->context->iSwitchToSingleIframeBySelector($selector, $locator);
 
         $iframeText = $this->seleniumSession->evaluateScript("return document.querySelector('". $css . "').text");
@@ -707,6 +718,7 @@ JS;
 
         $this->expectException(\Exception::class);
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $this->context->iSwitchToSingleIframeBySelector($selector, $locator);
     }
 
@@ -720,6 +732,7 @@ JS;
         $locator = '//body/iframe[3]';
         $css = '#iframe-text';
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $this->context->iSwitchToSingleIframeBySelector($selector, $locator);
 
         $iframeText = $this->seleniumSession->evaluateScript("return document.querySelector('". $css . "').text");
@@ -737,6 +750,7 @@ JS;
         $locator = '.test-iframe-class';
         $css = '#iframe-text';
 
+        /** @noinspection PhpUnhandledExceptionInspection */
         $this->context->iSwitchToSingleIframeBySelector($selector, $locator);
 
         $iframeText = $this->seleniumSession->evaluateScript("return document.querySelector('". $css . "').text");
