@@ -242,12 +242,14 @@ class HTMLContext extends RawMinkContext
         }
 
         if ($selectortype === 'class') {
-            $this->getSession()->evaluateScript("
-                document.getElementsByClassName('" . $selector . "')
-                .item(0).scrollIntoView();");
+            $script = <<<JS
+document.getElementsByClassName('$selector').item(0).scrollIntoView();
+JS;
+
+            $this->getSession()->executeScript($script);
         }
         if ($selectortype === 'id') {
-            $this->getSession()->evaluateScript("document.getElementById('" . $selector . "').scrollIntoView();");
+            $this->getSession()->executeScript("document.getElementById('" . $selector . "').scrollIntoView();");
         }
     }
 

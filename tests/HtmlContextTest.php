@@ -175,7 +175,7 @@ class HtmlContextTest extends AbstractTestCase
         $this->context->iScrollToElement($selectorType, $selector);
     }
 
-    public function testScrollToElementWillScrollToTheElement()
+    public function testScrollToElementWillScrollToTheElementUsingIdSelector()
     {
         $url = $this->server->getUrl('/scroll-test');
 
@@ -184,6 +184,41 @@ class HtmlContextTest extends AbstractTestCase
         $selectorType = 'id';
         $selector = 'success';
         $fullSelector = '#success';
+
+        $script = <<<JS
+(function () {
+    var el = document.querySelector('$fullSelector');
+    var isInViewport = function (elem) {
+    var bounding = elem.getBoundingClientRect();
+    return (
+        bounding.top >= 0 &&
+        bounding.left >= 0 &&
+        bounding.bottom <= (window.innerHeight || document.documentElement.clientHeight) &&
+        bounding.right <= (window.innerWidth || document.documentElement.clientWidth)
+    );
+};
+        
+    return isInViewport(el);
+})()
+JS;
+
+
+        $this->context->iScrollToElement($selectorType, $selector);
+
+        $evaluatedScript = (bool) $this->seleniumSession->evaluateScript("return $script");
+
+        $this->assertTrue($evaluatedScript);
+    }
+
+    public function testScrollToElementWillScrollToTheElementUsingClassSelector()
+    {
+        $url = $this->server->getUrl('/scroll-test');
+
+        $this->seleniumSession->visit($url);
+
+        $selectorType = 'class';
+        $selector = 'success2';
+        $fullSelector = '.success2';
 
         $script = <<<JS
 (function () {
