@@ -3,10 +3,8 @@
 namespace EdmondsCommerce\BehatHtmlContext;
 
 use Behat\Mink\Driver\Selenium2Driver;
-use Behat\MinkExtension\ServiceContainer\Driver\Selenium2Factory;
 use PHPUnit\Framework\TestCase;
 use Behat\Mink\Driver\GoutteDriver;
-use Behat\Mink\Mink;
 use Behat\Mink\Session;
 use GuzzleHttp\Client;
 
@@ -23,13 +21,10 @@ abstract class AbstractTestCase extends TestCase
     protected $goutteSession;
     protected $containerIp;
 
-    public function setUp()
-    {
-        parent::setUp();
-        $this->setUpSeleniumMink();
-        $this->setUpGoutteMink();
-    }
-
+    /**
+     * @SuppressWarnings(PHPMD.BooleanArgumentFlag)
+     * @param bool $headless
+     */
     protected function setUpSeleniumMink(bool $headless = true)
     {
         $args = [
@@ -50,6 +45,13 @@ abstract class AbstractTestCase extends TestCase
         $this->seleniumSession = new Session($driver);
     }
 
+    public function setUp()
+    {
+        parent::setUp();
+        $this->setUpSeleniumMink();
+        $this->setUpGoutteMink();
+    }
+
     protected function setUpGoutteMink() {
         $guzzle       = new Client();
         $goutteClient = new \Goutte\Client();
@@ -58,6 +60,10 @@ abstract class AbstractTestCase extends TestCase
         $this->goutteSession = new Session($goutteDriver);
     }
 
+    /**
+     * @SuppressWarnings(PHPMD.UnusedLocalVariable)
+     * @return mixed
+     */
     protected function getContainerIp()
     {
         $commandToExecute = 'ip addr show eth0 | grep "inet\b" | awk \'{print $2}\' | cut -d/ -f1';

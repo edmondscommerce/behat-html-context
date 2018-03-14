@@ -1,8 +1,8 @@
-<?php
+<?php declare(strict_types=1);
+
+namespace EdmondsCommerce\BehatHtmlContext;
 
 use Behat\Mink\Mink;
-use EdmondsCommerce\BehatHtmlContext\AbstractTestCase;
-use EdmondsCommerce\BehatHtmlContext\RedirectionContext;
 use EdmondsCommerce\MockServer\MockServer;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 

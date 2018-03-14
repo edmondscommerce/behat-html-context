@@ -5,6 +5,13 @@ use Behat\Mink\Exception\ExpectationException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Exception;
 
+/**
+ * Class HTMLContext
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessiveClassComplexity)
+ * @package EdmondsCommerce\BehatHtmlContext
+ */
+
 class HTMLContext extends RawMinkContext
 {
 
@@ -110,7 +117,7 @@ class HTMLContext extends RawMinkContext
     }
 
     /**
-     * @param $css
+     * @param string $css
      * @Then /^I should match the element "([^"]*)"$/
      */
     public function iMatchTheElement($css)
@@ -126,7 +133,7 @@ class HTMLContext extends RawMinkContext
     }
 
     /**
-     * @param $css
+     * @param string $css
      * @Then /^I should not match the element "([^"]*)"$/
      */
     public function iDontMatchTheElement($css)
@@ -209,11 +216,11 @@ class HTMLContext extends RawMinkContext
      */
     public function iScrollToElement($selectortype, $selector)
     {
-        if (!in_array($selectortype, array("class", "id")))
+        if (!in_array($selectortype, array("class", "id"), true))
         {
             throw new Exception("Selector type has to be either 'class' or 'id'");
         }
-        if (in_array(substr($selector, 0, 1), array(".", "#")))
+        if (in_array(substr($selector, 0, 1), array(".", "#"), true))
         {
             throw new Exception("Selector should plain without a . or #");
         }
@@ -253,9 +260,9 @@ class HTMLContext extends RawMinkContext
     /**
      * @Then I submit the form :id
      */
-    public function iSubmitTheForm($id)
+    public function iSubmitTheForm($identifier)
     {
-        $this->getSession()->evaluateScript("document.getElementById('" . $id . "').submit();");
+        $this->getSession()->evaluateScript("document.getElementById('" . $identifier . "').submit();");
     }
 
 
@@ -269,7 +276,7 @@ class HTMLContext extends RawMinkContext
         $select = $this->getSession()
             ->getPage()
             ->find("named", array('select', $name));
-        if ($select->has('named', array('option', $value)))
+        if (null !== $select && $select->has('named', array('option', $value)))
         {
             return true;
         }
@@ -288,7 +295,7 @@ class HTMLContext extends RawMinkContext
         $select = $this->getSession()
             ->getPage()
             ->find("named", array('select', $name));
-        if (!$select->has('named', array('option', $value)))
+        if (null !== $select && !$select->has('named', array('option', $value)))
         {
             return true;
         }
@@ -323,8 +330,8 @@ class HTMLContext extends RawMinkContext
     }
 
     /**
-     * @param $selector
-     * @param $locator
+     * @param string $selector
+     * @param string $locator
      * @param null $message
      * @return NodeElement
      * @throws ExpectationException
@@ -343,8 +350,8 @@ class HTMLContext extends RawMinkContext
 
     /**
      * Trys to find one or many items, will fail if the result count is 0 or result is null
-     * @param $selector
-     * @param $locator
+     * @param string $selector
+     * @param string $locator
      * @param null $message
      * @return NodeElement[]
      * @throws ExpectationException
@@ -352,7 +359,7 @@ class HTMLContext extends RawMinkContext
     public function findAllOrFail($selector, $locator, $message = null)
     {
         $search = $this->getSession()->getPage()->findAll($selector, $locator);
-        if (count($search) === 0 || $search === null)
+        if (count($search) === 0)
         {
             $message = ($message === null) ? 'Could not find any elements ' . $locator : $message;
             throw new ExpectationException($message, $this->getSession()->getDriver());
@@ -363,8 +370,8 @@ class HTMLContext extends RawMinkContext
 
     /**
      * @param NodeElement $element
-     * @param $selector
-     * @param $locator
+     * @param string $selector
+     * @param string $locator
      * @param null $message
      * @return NodeElement|mixed|null
      * @throws ExpectationException
@@ -383,8 +390,8 @@ class HTMLContext extends RawMinkContext
 
     /**
      * @param NodeElement $element
-     * @param $selector
-     * @param $locator
+     * @param string $selector
+     * @param string $locator
      * @param null $message
      * @return NodeElement[]
      * @throws ExpectationException
@@ -392,7 +399,7 @@ class HTMLContext extends RawMinkContext
     public function findAllOrFailFromNode(NodeElement $element, $selector, $locator, $message = null)
     {
         $result = $element->findAll($selector, $locator);
-        if ($result === null || count($result) == 0)
+        if (count($result) == 0)
         {
             $message = ($message === null) ? 'Could not find the element ' . $locator : $message;
             throw new ExpectationException($message, $this->getSession()->getDriver());

@@ -8,10 +8,18 @@ use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Mink;
 use EdmondsCommerce\MockServer\MockServer;
 
+/**
+ * Class HtmlContextTest
+ * @SuppressWarnings(PHPMD.TooManyMethods)
+ * @SuppressWarnings(PHPMD.TooManyPublicMethods)
+ * @SuppressWarnings(PHPMD.ExcessivePublicCount)
+ * @package EdmondsCommerce\BehatHtmlContext
+ */
+
 class HtmlContextTest extends AbstractTestCase
 {
     /**
-     * @var HtmlContext
+     * @var HTMLContext
      */
     private $context;
 
@@ -196,7 +204,7 @@ JS;
 
         $this->context->iScrollToElement($selectorType, $selector);
 
-        $evaluatedScript = $this->seleniumSession->evaluateScript("return $script");
+        $evaluatedScript = (bool) $this->seleniumSession->evaluateScript("return $script");
 
         $this->assertTrue($evaluatedScript);
     }
@@ -230,7 +238,7 @@ JS;
 
         $this->context->iScrollTo($css);
 
-        $evaluatedScript = $this->seleniumSession->evaluateScript("return $script");
+        $evaluatedScript = (bool) $this->seleniumSession->evaluateScript("return $script");
 
         $this->assertTrue($evaluatedScript);
     }
@@ -340,9 +348,9 @@ JS;
 
         $this->seleniumSession->visit($url);
 
-        $id = 'successful-form';
+        $identifier = 'successful-form';
 
-        $this->context->iSubmitTheForm($id);
+        $this->context->iSubmitTheForm($identifier);
 
         $this->assertEquals('Success', $this->seleniumSession->getPage()->getText());
     }
@@ -474,8 +482,6 @@ JS;
         /* document.querySelector("'. $css . '") */
         $css = '#iframe-text';
 
-        $text = $this->seleniumSession->evaluateScript("return document.querySelector('". $css . "').text");
-
         $iframeName = 'test-iframe';
 
         $this->context->iSwitchToSingleIframe($iframeName);
@@ -496,9 +502,7 @@ JS;
 
         /* document.querySelector("'. $css . '") */
         $css = '#iframe-text';
-
-        $text = $this->seleniumSession->evaluateScript("return document.querySelector('". $css . "').text");
-
+        
         $iframeName = 'test-iframe';
 
         $this->context->iSwitchToSingleIframe($iframeName);

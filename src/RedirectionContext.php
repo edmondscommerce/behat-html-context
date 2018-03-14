@@ -4,6 +4,7 @@ use Behat\Behat\Context\Context;
 use Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Mink\Driver\GoutteDriver;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
+use Behat\Mink\Session;
 use Behat\MinkExtension\Context\RawMinkContext;
 use EdmondsCommerce\ContextDependencies;
 
