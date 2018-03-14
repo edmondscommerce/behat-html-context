@@ -10,6 +10,10 @@ use EdmondsCommerce\ContextDependencies;
 class RedirectionContext extends RawMinkContext implements Context, SnippetAcceptingContext
 {
 
+    /**
+     * @deprecated
+     * @throws UnsupportedDriverActionException
+     */
     public function canIntercept()
     {
         $driver = $this->getSession()->getDriver();
@@ -22,6 +26,7 @@ class RedirectionContext extends RawMinkContext implements Context, SnippetAccep
     }
 
     /**
+     * @deprecated
      * @Given I don't follow redirects
      */
     public function redirectsAreIntercepted()
@@ -31,6 +36,7 @@ class RedirectionContext extends RawMinkContext implements Context, SnippetAccep
     }
 
     /**
+     * @deprecated
      * @When /^I follow the redirection$/
      * @Then /^I should be redirected$/
      */

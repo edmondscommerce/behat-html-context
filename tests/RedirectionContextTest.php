@@ -51,11 +51,4 @@ class RedirectionContextTest extends AbstractTestCase {
 
         $context->canIntercept();
     }
-
-    public function testRedirectsAreInterceptedWillNotFollowAnyRedirects() {
-
-    }
-
-    public function testFollowTheRedirectionWillRedirectMeToThePage() {
-    }
 }
