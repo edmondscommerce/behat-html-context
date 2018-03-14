@@ -7,7 +7,7 @@ A simple Behat Context for working with HTML and navigation
 
 Install via composer
 
-    "edmondscommerce/behat-html-context": "~1.0"
+    "edmondscommerce/behat-html-context": "0.0.1"
 
 ### Include Context in Behat Configuration
         
