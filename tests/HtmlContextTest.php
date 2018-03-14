@@ -2,7 +2,6 @@
 
 namespace EdmondsCommerce\BehatHtmlContext;
 
-
 use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\Mink\Mink;
@@ -94,7 +93,6 @@ class HtmlContextTest extends AbstractTestCase
         $this->context->iClickOnTheFirstVisibleText($text);
 
         $this->assertEquals('First Text', $this->seleniumSession->getPage()->getText());
-
     }
 
     public function testClickOnFirstVisibleTextThatIsNotPresent()
@@ -149,7 +147,8 @@ class HtmlContextTest extends AbstractTestCase
         $this->assertEquals('Success', $this->seleniumSession->getPage()->getText());
     }
 
-    public function testScrollToElementWithIncorrectSelectorTypeWillFail() {
+    public function testScrollToElementWithIncorrectSelectorTypeWillFail()
+    {
         $url = $this->server->getUrl('/scroll-test');
 
         $this->seleniumSession->visit($url);
@@ -162,7 +161,8 @@ class HtmlContextTest extends AbstractTestCase
         $this->context->iScrollToElement($selectorType, $selector);
     }
 
-    public function testScrollToElementWithSelectorPrecededWithDotOrHashWillFail() {
+    public function testScrollToElementWithSelectorPrecededWithDotOrHashWillFail()
+    {
         $url = $this->server->getUrl('/scroll-test');
 
         $this->seleniumSession->visit($url);
@@ -175,7 +175,8 @@ class HtmlContextTest extends AbstractTestCase
         $this->context->iScrollToElement($selectorType, $selector);
     }
 
-    public function testScrollToElementWillScrollToTheElement() {
+    public function testScrollToElementWillScrollToTheElement()
+    {
         $url = $this->server->getUrl('/scroll-test');
 
         $this->seleniumSession->visit($url);
@@ -210,7 +211,8 @@ JS;
     }
 
 
-    public function testScrollToWillScrollToTheDesiredElement() {
+    public function testScrollToWillScrollToTheDesiredElement()
+    {
         $url = $this->server->getUrl('/scroll-test');
 
         $this->seleniumSession->visit($url);
@@ -243,7 +245,8 @@ JS;
         $this->assertTrue($evaluatedScript);
     }
 
-    public function testMaximiseWindowWillMaximiseWindow() {
+    public function testMaximiseWindowWillMaximiseWindow()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -272,7 +275,8 @@ JS;
         $this->assertEquals('none', $visible);
     }
 
-    public function testMatchElementWillFindTheElement() {
+    public function testMatchElementWillFindTheElement()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -282,7 +286,8 @@ JS;
         $this->assertTrue($this->context->iMatchTheElement($css));
     }
 
-    public function testMatchElementWillNotFindAnElement() {
+    public function testMatchElementWillNotFindAnElement()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -292,10 +297,10 @@ JS;
         $this->expectException(\UnexpectedValueException::class);
 
         $this->context->iMatchTheElement($css);
-
     }
 
-    public function testDontMatchTheElementWillNotFindAnElement() {
+    public function testDontMatchTheElementWillNotFindAnElement()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -305,7 +310,8 @@ JS;
         $this->assertTrue($this->context->iDontMatchTheElement($css));
     }
 
-    public function testDontMatchTheElementMatchesTheElement() {
+    public function testDontMatchTheElementMatchesTheElement()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -317,7 +323,8 @@ JS;
         $this->context->iDontMatchTheElement($css);
     }
 
-    public function testShouldSeeXorYShouldFindOneOfTheElementsOnly() {
+    public function testShouldSeeXorYShouldFindOneOfTheElementsOnly()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -329,7 +336,8 @@ JS;
         $this->assertTrue($this->context->iShouldSeeXorY($css1, $css2));
     }
 
-    public function testShouldSeeXorYMatchesNoElements() {
+    public function testShouldSeeXorYMatchesNoElements()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -343,7 +351,8 @@ JS;
         $this->context->iShouldSeeXorY($css1, $css2);
     }
 
-    public function testSubmitTheFormSubmitsTheForm() {
+    public function testSubmitTheFormSubmitsTheForm()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -355,7 +364,8 @@ JS;
         $this->assertEquals('Success', $this->seleniumSession->getPage()->getText());
     }
 
-    public function testSelectShouldContainValueWillFindASelectWithSpecifiedOptionValue() {
+    public function testSelectShouldContainValueWillFindASelectWithSpecifiedOptionValue()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -366,7 +376,8 @@ JS;
         $this->assertTrue($this->context->theSelectShouldContainValue($selectName, $optionValue));
     }
 
-    public function testSelectShouldContainValueWillNotFindSpecifiedOptionValue() {
+    public function testSelectShouldContainValueWillNotFindSpecifiedOptionValue()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -379,7 +390,8 @@ JS;
         $this->context->theSelectShouldContainValue($selectName, $optionValue);
     }
 
-    public function testSelectShouldNotContainValueWillFindASelectContainingSpecifiedValue() {
+    public function testSelectShouldNotContainValueWillFindASelectContainingSpecifiedValue()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -388,10 +400,10 @@ JS;
         $optionValue = '3';
 
         $this->assertTrue($this->context->theSelectShouldNotContainValue($selectName, $optionValue));
-
     }
 
-    public function testSelectShouldNotContainValueWillNotFindASelectContainingSpecifiedValue() {
+    public function testSelectShouldNotContainValueWillNotFindASelectContainingSpecifiedValue()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -404,7 +416,8 @@ JS;
         $this->context->theSelectShouldNotContainValue($selectName, $optionValue);
     }
 
-    public function testTheElementAttributeShouldNotContainValueWillNotFindAnElement() {
+    public function testTheElementAttributeShouldNotContainValueWillNotFindAnElement()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -418,7 +431,8 @@ JS;
         $this->context->theElementAttributeShouldNotContainValue($css, $attribute, $value);
     }
 
-    public function testTheElementAttributeShouldNotContainValueWillContainSpecifiedValue() {
+    public function testTheElementAttributeShouldNotContainValueWillContainSpecifiedValue()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -432,7 +446,8 @@ JS;
         $this->context->theElementAttributeShouldNotContainValue($css, $attribute, $value);
     }
 
-    public function testTheElementAttributeShouldNotContainValueWillNotContainSpecifiedValue() {
+    public function testTheElementAttributeShouldNotContainValueWillNotContainSpecifiedValue()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -441,10 +456,13 @@ JS;
         $attribute = 'method';
         $value = 'SOMERANDOMVALUE';
 
-        $this->assertNotContains($value, $this->context->theElementAttributeShouldNotContainValue($css, $attribute, $value));
+        $result = $this->context->theElementAttributeShouldNotContainValue($css, $attribute, $value);
+
+        $this->assertNotContains($value, $result);
     }
 
-    public function testFindOneOrFailWillFindOneElement() {
+    public function testFindOneOrFailWillFindOneElement()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -457,7 +475,8 @@ JS;
         $this->assertEquals('Nested', $element->getHtml());
     }
 
-    public function testFindOneOrFailWillFailToFindOneElement() {
+    public function testFindOneOrFailWillFailToFindOneElement()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -474,7 +493,8 @@ JS;
      * Test that #iframe-text will return different text depending if DOM reference is pointing to iframe or not
      */
 
-    public function testSwitchToSingleIframeWillSwitchDomReferenceToThatIframe() {
+    public function testSwitchToSingleIframeWillSwitchDomReferenceToThatIframe()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -495,7 +515,8 @@ JS;
      * Test that #iframe-text DOM reference will not longer point to that specific iframe, after switching out
      */
 
-    public function testSwitchOutOfIFrameWillSwitchDomReferenceNotToPointToThatIframe() {
+    public function testSwitchOutOfIFrameWillSwitchDomReferenceNotToPointToThatIframe()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -513,7 +534,8 @@ JS;
         $this->assertEquals('NOT IFRAME TEXT', $iframeText);
     }
 
-    public function testWaitForMilliseconds() {
+    public function testWaitForMilliseconds()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -527,7 +549,8 @@ JS;
         $this->assertEquals((float)1000, (float) $timeElapsed, '', 50); // Adding 50ms error cap
     }
 
-    public function testFindAllOrFailWillNotFindAnyElements() {
+    public function testFindAllOrFailWillNotFindAnyElements()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -538,10 +561,10 @@ JS;
         $this->expectException(ExpectationException::class);
 
         $this->context->findAllOrFail($selector, $locator);
-
     }
 
-    public function testFindAllOrFailWillFindAllElementsSpecifiedByLocator() {
+    public function testFindAllOrFailWillFindAllElementsSpecifiedByLocator()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -553,10 +576,10 @@ JS;
         $elements = $this->context->findAllOrFail($selector, $locator);
 
         $this->assertCount(2, $elements);
-
     }
 
-    public function testFindOrFailFromNodeWillFindAnElement() {
+    public function testFindOrFailFromNodeWillFindAnElement()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -569,10 +592,10 @@ JS;
         $node = $this->context->findOrFailFromNode($element, $selector, $locator);
 
         $this->assertEquals('Nested', $node->getHtml());
-
     }
 
-    public function testFindOrFailFromNodeWillFailToFindAnElement() {
+    public function testFindOrFailFromNodeWillFailToFindAnElement()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -587,7 +610,8 @@ JS;
         $this->context->findOrFailFromNode($element, $selector, $locator);
     }
 
-    public function testFindAllOrFailFromNodeWillFindElements() {
+    public function testFindAllOrFailFromNodeWillFindElements()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -602,7 +626,8 @@ JS;
         $this->assertCount(4, $elements);
     }
 
-    public function testFindAllOrFailFromNodeWillFailToFindElements() {
+    public function testFindAllOrFailFromNodeWillFailToFindElements()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -617,7 +642,8 @@ JS;
         $this->context->findAllOrFailFromNode($element, $selector, $locator);
     }
 
-    public function testGetTableWillExtractTableValuesFromNodeElementToArray() {
+    public function testGetTableWillExtractTableValuesFromNodeElementToArray()
+    {
         $url = $this->server->getUrl('/table');
 
         $this->seleniumSession->visit($url);
@@ -630,7 +656,8 @@ JS;
         $this->assertCount(3, $table);
     }
 
-    public function testSwitchToSingleIframeBySelectorUsingCss() {
+    public function testSwitchToSingleIframeBySelectorUsingCss()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -649,7 +676,8 @@ JS;
         $this->assertEquals('IFRAME TEXT', $iframeText);
     }
 
-    public function testSwitchToSingleIframeBySelectorUsingXpath() {
+    public function testSwitchToSingleIframeBySelectorUsingXpath()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -668,7 +696,8 @@ JS;
         $this->assertEquals('IFRAME TEXT', $iframeText);
     }
 
-    public function testSwitchToSingleIframeBySelectorWillNotFindTheIframe() {
+    public function testSwitchToSingleIframeBySelectorWillNotFindTheIframe()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -679,10 +708,10 @@ JS;
         $this->expectException(\Exception::class);
 
         $this->context->iSwitchToSingleIframeBySelector($selector, $locator);
-
     }
 
-    public function testSwitchToSingleIframeBySelectorUsingXpathWithoutIframeName() {
+    public function testSwitchToSingleIframeBySelectorUsingXpathWithoutIframeName()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -698,7 +727,8 @@ JS;
         $this->assertEquals('IFRAME TEXT TEST 2', $iframeText);
     }
 
-    public function testSwitchToSingleIframeBySelectorUsingCssWithoutIframeName() {
+    public function testSwitchToSingleIframeBySelectorUsingCssWithoutIframeName()
+    {
         $url = $this->server->getUrl('/');
 
         $this->seleniumSession->visit($url);
@@ -713,5 +743,4 @@ JS;
 
         $this->assertEquals('IFRAME TEXT TEST', $iframeText);
     }
-
 }

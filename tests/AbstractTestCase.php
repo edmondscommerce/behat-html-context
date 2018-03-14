@@ -35,8 +35,7 @@ abstract class AbstractTestCase extends TestCase
             ],
         ];
 
-        if ($headless)
-        {
+        if ($headless) {
             $args['args'][] = '--headless';
         }
 
@@ -52,7 +51,8 @@ abstract class AbstractTestCase extends TestCase
         $this->setUpGoutteMink();
     }
 
-    protected function setUpGoutteMink() {
+    protected function setUpGoutteMink()
+    {
         $guzzle       = new Client();
         $goutteClient = new \Goutte\Client();
         $goutteClient->setClient($guzzle);

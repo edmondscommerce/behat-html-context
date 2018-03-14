@@ -27,8 +27,7 @@ class HTMLContext extends RawMinkContext
             'xpath',
             '/*//*[text()[contains(.,"' . $text . '")]]'
         );
-        if (null === $element)
-        {
+        if (null === $element) {
             throw new \UnexpectedValueException(sprintf('Cannot find text: "%s"', $text));
         }
 
@@ -50,15 +49,12 @@ class HTMLContext extends RawMinkContext
             '/*//*[text()[contains(.,"' . $text . '")]]'
         );
 
-        if (count($elements) == 0)
-        {
+        if (count($elements) == 0) {
             throw new \UnexpectedValueException(sprintf('Cannot find text: "%s"', $text));
         }
 
-        foreach ($elements as $element)
-        {
-            if ($element->isVisible())
-            {
+        foreach ($elements as $element) {
+            if ($element->isVisible()) {
                 $element->click();
                 return;
             }
@@ -76,8 +72,7 @@ class HTMLContext extends RawMinkContext
     {
         $session = $this->getSession();
         $element = $session->getPage()->find('css', $css);
-        if (null === $element)
-        {
+        if (null === $element) {
             throw new \UnexpectedValueException(sprintf('Cannot find element with css: "%s"', $css));
         }
 
@@ -124,8 +119,7 @@ class HTMLContext extends RawMinkContext
     {
         $session = $this->getSession();
         $element = $session->getPage()->find('css', $css);
-        if (null === $element)
-        {
+        if (null === $element) {
             throw new \UnexpectedValueException(sprintf('Cannot find element with css: "%s"', $css));
         }
 
@@ -140,8 +134,7 @@ class HTMLContext extends RawMinkContext
     {
         $session = $this->getSession();
         $element = $session->getPage()->find('css', $css);
-        if (null !== $element)
-        {
+        if (null !== $element) {
             throw new \UnexpectedValueException(sprintf('Found element with css: "%s"', $css));
         }
 
@@ -172,7 +165,8 @@ class HTMLContext extends RawMinkContext
      * @Given /^I switch to iframe identified by the following selector type "([^"]*)" and it's value "([^"]*)"$/
      */
 
-    public function iSwitchToSingleIframeBySelector($selectorType, $locator) {
+    public function iSwitchToSingleIframeBySelector($selectorType, $locator)
+    {
         $node = $this->findOneOrFail($selectorType, $locator);
         $session = $this->getSession();
 
@@ -183,10 +177,14 @@ class HTMLContext extends RawMinkContext
 
             switch ($selectorType) {
                 case 'css':
-                    $session->executeScript("document.querySelector('" . $locator . "').setAttribute('name', '" . $nameAttributeValue . "');");
+                    $session->executeScript("
+                        document.querySelector('" . $locator . "')
+                            .setAttribute('name', '" . $nameAttributeValue . "');");
                     break;
                 case 'xpath':
-                    $session->executeScript("document.evaluate('" . $locator . "', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null).singleNodeValue.setAttribute('name', '" . $nameAttributeValue . "');");
+                    $session->executeScript("
+                        document.evaluate('" . $locator . "', document, null, XPathResult.FIRST_ORDERED_NODE_TYPE, null)
+                            .singleNodeValue.setAttribute('name', '" . $nameAttributeValue . "');");
                     break;
             }
         }
@@ -216,21 +214,19 @@ class HTMLContext extends RawMinkContext
      */
     public function iScrollToElement($selectortype, $selector)
     {
-        if (!in_array($selectortype, array("class", "id"), true))
-        {
+        if (!in_array($selectortype, array("class", "id"), true)) {
             throw new Exception("Selector type has to be either 'class' or 'id'");
         }
-        if (in_array(substr($selector, 0, 1), array(".", "#"), true))
-        {
+        if (in_array(substr($selector, 0, 1), array(".", "#"), true)) {
             throw new Exception("Selector should plain without a . or #");
         }
 
-        if ($selectortype == "class")
-        {
-            $this->getSession()->evaluateScript("document.getElementsByClassName('" . $selector . "').item(0).scrollIntoView();");
+        if ($selectortype == "class") {
+            $this->getSession()->evaluateScript("
+                document.getElementsByClassName('" . $selector . "')
+                .item(0).scrollIntoView();");
         }
-        if ($selectortype == "id")
-        {
+        if ($selectortype == "id") {
             $this->getSession()->evaluateScript("document.getElementById('" . $selector . "').scrollIntoView();");
         }
     }
@@ -249,8 +245,7 @@ class HTMLContext extends RawMinkContext
             ->getPage()
             ->findAll("css", $css2);
 
-        if (sizeof($elements1) > 0 xor sizeof($elements2) > 0)
-        {
+        if (sizeof($elements1) > 0 xor sizeof($elements2) > 0) {
             return true;
         }
 
@@ -276,13 +271,12 @@ class HTMLContext extends RawMinkContext
         $select = $this->getSession()
             ->getPage()
             ->find("named", array('select', $name));
-        if (null !== $select && $select->has('named', array('option', $value)))
-        {
+        if (null !== $select && $select->has('named', array('option', $value))) {
             return true;
         }
 
-        throw new Exception('Element ' . $name . ' should contain an option named ' . $value . " but one was not found");
-
+        throw new Exception('Element ' . $name . ' should contain an option named '
+            . $value . " but one was not found");
     }
 
     /**
@@ -295,13 +289,12 @@ class HTMLContext extends RawMinkContext
         $select = $this->getSession()
             ->getPage()
             ->find("named", array('select', $name));
-        if (null !== $select && !$select->has('named', array('option', $value)))
-        {
+        if (null !== $select && !$select->has('named', array('option', $value))) {
             return true;
         }
 
-        throw new Exception('Element ' . $name . ' should not contain an option named ' . $value . " but one was found");
-
+        throw new Exception('Element ' . $name . ' should not contain an option named '
+            . $value . " but one was found");
     }
 
     /**
@@ -314,15 +307,13 @@ class HTMLContext extends RawMinkContext
             ->getPage()
             ->find("css", $css);
 
-        if (is_null($element))
-        {
+        if (is_null($element)) {
             throw new Exception("No element matching the CSS " . $css . " was found");
         }
 
         $attributeValue = $element->getAttribute($attribute);
 
-        if (strpos($attributeValue, $value) !== false)
-        {
+        if (strpos($attributeValue, $value) !== false) {
             throw new Exception("The element " . $css . "'s attribute " . $attribute . " contains " . $value);
         }
 
@@ -339,8 +330,7 @@ class HTMLContext extends RawMinkContext
     public function findOneOrFail($selector, $locator, $message = null)
     {
         $search = $this->getSession()->getPage()->find($selector, $locator);
-        if ($search === null)
-        {
+        if ($search === null) {
             $message = ($message === null) ? 'Could not find the element ' . $locator : $message;
             throw new ExpectationException($message, $this->getSession()->getDriver());
         }
@@ -359,8 +349,7 @@ class HTMLContext extends RawMinkContext
     public function findAllOrFail($selector, $locator, $message = null)
     {
         $search = $this->getSession()->getPage()->findAll($selector, $locator);
-        if (count($search) === 0)
-        {
+        if (count($search) === 0) {
             $message = ($message === null) ? 'Could not find any elements ' . $locator : $message;
             throw new ExpectationException($message, $this->getSession()->getDriver());
         }
@@ -379,8 +368,7 @@ class HTMLContext extends RawMinkContext
     public function findOrFailFromNode(NodeElement $element, $selector, $locator, $message = null)
     {
         $result = $element->find($selector, $locator);
-        if ($result === null)
-        {
+        if ($result === null) {
             $message = ($message === null) ? 'Could not find the element ' . $locator : $message;
             throw new ExpectationException($message, $this->getSession()->getDriver());
         }
@@ -399,8 +387,7 @@ class HTMLContext extends RawMinkContext
     public function findAllOrFailFromNode(NodeElement $element, $selector, $locator, $message = null)
     {
         $result = $element->findAll($selector, $locator);
-        if (count($result) == 0)
-        {
+        if (count($result) == 0) {
             $message = ($message === null) ? 'Could not find the element ' . $locator : $message;
             throw new ExpectationException($message, $this->getSession()->getDriver());
         }
@@ -420,12 +407,10 @@ class HTMLContext extends RawMinkContext
         $result = [];
 
         /** @var NodeElement $row */
-        foreach ($element->findAll('css', 'tr') as $row)
-        {
+        foreach ($element->findAll('css', 'tr') as $row) {
             $rowResult = [];
             /** @var NodeElement $cell */
-            foreach ($row->findAll('css', 'th,td') as $cell)
-            {
+            foreach ($row->findAll('css', 'th,td') as $cell) {
                 $rowResult[] = $cell->getText();
             }
             $result[] = $rowResult;

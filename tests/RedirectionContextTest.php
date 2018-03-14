@@ -6,8 +6,8 @@ use Behat\Mink\Mink;
 use EdmondsCommerce\MockServer\MockServer;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 
-
-class RedirectionContextTest extends AbstractTestCase {
+class RedirectionContextTest extends AbstractTestCase
+{
 
     /**
      * @var RedirectionContext
@@ -39,7 +39,8 @@ class RedirectionContextTest extends AbstractTestCase {
         $this->context->setMink($mink);
     }
 
-    public function testCanInterceptWillThrowExceptionForUnsupportedDriver() {
+    public function testCanInterceptWillThrowExceptionForUnsupportedDriver()
+    {
         $mink = new Mink(['selenium2' => $this->seleniumSession]);
         $mink->setDefaultSessionName('selenium2');
         $this->seleniumSession->start();

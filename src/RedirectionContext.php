@@ -33,7 +33,6 @@ class RedirectionContext extends RawMinkContext implements Context, SnippetAccep
     public function redirectsAreIntercepted()
     {
         $this->getSession()->getDriver()->getClient()->followRedirects(false);
-
     }
 
     /**
