@@ -4,6 +4,7 @@ use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\MinkExtension\Context\RawMinkContext;
 use Exception;
+use RuntimeException;
 
 /**
  * Class HTMLContext
@@ -19,6 +20,8 @@ class HTMLContext extends RawMinkContext
      * Click some text
      *
      * @When /^I click on the text "([^"]*)"$/
+     * @param string $text
+     * @throws \UnexpectedValueException
      */
     public function iClickOnTheText($text)
     {
@@ -38,6 +41,8 @@ class HTMLContext extends RawMinkContext
      * Click first instance of visible text
      *
      * @When /^I click on the first visible text "([^"]*)"$/
+     * @param string $text
+     * @throws \UnexpectedValueException
      */
     public function iClickOnTheFirstVisibleText($text)
     {
@@ -49,7 +54,7 @@ class HTMLContext extends RawMinkContext
             '/*//*[text()[contains(.,"' . $text . '")]]'
         );
 
-        if (count($elements) == 0) {
+        if (count($elements) === 0) {
             throw new \UnexpectedValueException(sprintf('Cannot find text: "%s"', $text));
         }
 
@@ -67,6 +72,8 @@ class HTMLContext extends RawMinkContext
      * Click on element with CSS
      *
      * @When /^I click on the element "([^"]*)"$/
+     * @param string $css
+     * @throws \UnexpectedValueException
      */
     public function iClickOnTheElement($css)
     {
@@ -82,6 +89,7 @@ class HTMLContext extends RawMinkContext
     /**
      * Scroll to element with CSS
      * @When /^I scroll to "([^"]*)"$/
+     * @param string $css
      */
     public function iScrollTo($css)
     {
@@ -101,6 +109,7 @@ class HTMLContext extends RawMinkContext
      * Scroll to element with CSS
      *
      * @When /^I hide element "([^"]*)"$/
+     * @param string $css
      */
     public function iHideElement($css)
     {
@@ -114,8 +123,10 @@ class HTMLContext extends RawMinkContext
     /**
      * @param string $css
      * @Then /^I should match the element "([^"]*)"$/
+     * @return bool
+     * @throws \UnexpectedValueException
      */
-    public function iMatchTheElement($css)
+    public function iMatchTheElement($css): bool
     {
         $session = $this->getSession();
         $element = $session->getPage()->find('css', $css);
@@ -129,8 +140,10 @@ class HTMLContext extends RawMinkContext
     /**
      * @param string $css
      * @Then /^I should not match the element "([^"]*)"$/
+     * @return bool
+     * @throws \UnexpectedValueException
      */
-    public function iDontMatchTheElement($css)
+    public function iDontMatchTheElement($css): bool
     {
         $session = $this->getSession();
         $element = $session->getPage()->find('css', $css);
@@ -153,6 +166,7 @@ class HTMLContext extends RawMinkContext
 
     /**
      * @Given /^I switch to iframe "([^"]*)"$/
+     * @param string $arg1
      */
     public function iSwitchToSingleIframe($arg1)
     {
@@ -163,6 +177,9 @@ class HTMLContext extends RawMinkContext
      * More about selector types can be read here http://mink.behat.org/en/latest/guides/traversing-pages.html#selectors
      *
      * @Given /^I switch to iframe identified by the following selector type "([^"]*)" and it's value "([^"]*)"$/
+     * @param string $selectorType
+     * @param string $locator
+     * @throws ExpectationException
      */
 
     public function iSwitchToSingleIframeBySelector($selectorType, $locator)
@@ -202,6 +219,7 @@ class HTMLContext extends RawMinkContext
 
     /**
      * @When I wait :arg1 milliseconds
+     * @param int $mseconds
      */
     public function waitformilliseconds($mseconds)
     {
@@ -210,50 +228,56 @@ class HTMLContext extends RawMinkContext
 
     /**
      * @Then I scroll to the element with :selectortype :css
-     * @throws Exception
+     * @param string $selectortype
+     * @param string $selector
+     * @throws \RuntimeException
      */
     public function iScrollToElement($selectortype, $selector)
     {
-        if (!in_array($selectortype, array("class", "id"), true)) {
-            throw new Exception("Selector type has to be either 'class' or 'id'");
+        if (!\in_array($selectortype, array('class', 'id'), true)) {
+            throw new RuntimeException("Selector type has to be either 'class' or 'id'");
         }
-        if (in_array(substr($selector, 0, 1), array(".", "#"), true)) {
-            throw new Exception("Selector should plain without a . or #");
+        if (\in_array($selector[0], array('.', '#'), true)) {
+            throw new RuntimeException('Selector should plain without a . or #');
         }
 
-        if ($selectortype == "class") {
+        if ($selectortype === 'class') {
             $this->getSession()->evaluateScript("
                 document.getElementsByClassName('" . $selector . "')
                 .item(0).scrollIntoView();");
         }
-        if ($selectortype == "id") {
+        if ($selectortype === 'id') {
             $this->getSession()->evaluateScript("document.getElementById('" . $selector . "').scrollIntoView();");
         }
     }
 
     /**
      * @Then I should see one of the elements :css1 or :css2
-     * @throws Exception
+     * @param string $css1
+     * @param string $css2
+     * @return bool
+     * @throws \RuntimeException
      */
-    public function iShouldSeeXorY($css1, $css2)
+    public function iShouldSeeXorY($css1, $css2): bool
     {
 
         $elements1 = $this->getSession()
             ->getPage()
-            ->findAll("css", $css1);
+            ->findAll('css', $css1);
         $elements2 = $this->getSession()
             ->getPage()
-            ->findAll("css", $css2);
+            ->findAll('css', $css2);
 
         if (sizeof($elements1) > 0 xor sizeof($elements2) > 0) {
             return true;
         }
 
-        throw new Exception('Either both or none of the selected elements were found');
+        throw new RuntimeException('Either both or none of the selected elements were found');
     }
 
     /**
      * @Then I submit the form :id
+     * @param string $identifier
      */
     public function iSubmitTheForm($identifier)
     {
@@ -263,58 +287,68 @@ class HTMLContext extends RawMinkContext
 
     /**
      * @Then the select :name should contain an option :value
-     * @throws Exception
+     * @param string $name
+     * @param string $value
+     * @return bool
+     * @throws \RuntimeException
      */
-    public function theSelectShouldContainValue($name, $value)
+    public function theSelectShouldContainValue($name, $value): bool
     {
 
         $select = $this->getSession()
             ->getPage()
-            ->find("named", array('select', $name));
+            ->find('named', array('select', $name));
         if (null !== $select && $select->has('named', array('option', $value))) {
             return true;
         }
 
-        throw new Exception('Element ' . $name . ' should contain an option named '
-            . $value . " but one was not found");
+        throw new RuntimeException('Element ' . $name . ' should contain an option named '
+            . $value . ' but one was not found');
     }
 
     /**
      * @Then the select :name should not contain an option :value
-     * @throws Exception
+     * @param string $name
+     * @param string $value
+     * @return bool
+     * @throws \RuntimeException
      */
-    public function theSelectShouldNotContainValue($name, $value)
+    public function theSelectShouldNotContainValue($name, $value): bool
     {
 
         $select = $this->getSession()
             ->getPage()
-            ->find("named", array('select', $name));
+            ->find('named', array('select', $name));
         if (null !== $select && !$select->has('named', array('option', $value))) {
             return true;
         }
 
-        throw new Exception('Element ' . $name . ' should not contain an option named '
-            . $value . " but one was found");
+        throw new RuntimeException('Element ' . $name . ' should not contain an option named '
+            . $value . ' but one was found');
     }
 
     /**
      * @Then the element :css attribute :attribute should not contain :value
-     * @throws Exception
+     * @param string $css
+     * @param string $attribute
+     * @param string $value
+     * @return null|string
+     * @throws \RuntimeException
      */
     public function theElementAttributeShouldNotContainValue($css, $attribute, $value)
     {
         $element = $this->getSession()
             ->getPage()
-            ->find("css", $css);
+            ->find('css', $css);
 
-        if (is_null($element)) {
-            throw new Exception("No element matching the CSS " . $css . " was found");
+        if (null === $element) {
+            throw new RuntimeException('No element matching the CSS ' . $css . ' was found');
         }
 
         $attributeValue = $element->getAttribute($attribute);
 
         if (strpos($attributeValue, $value) !== false) {
-            throw new Exception("The element " . $css . "'s attribute " . $attribute . " contains " . $value);
+            throw new RuntimeException('The element ' . $css . "'s attribute " . $attribute . ' contains ' . $value);
         }
 
         return $attributeValue;
@@ -327,11 +361,11 @@ class HTMLContext extends RawMinkContext
      * @return NodeElement
      * @throws ExpectationException
      */
-    public function findOneOrFail($selector, $locator, $message = null)
+    public function findOneOrFail($selector, $locator, $message = null): NodeElement
     {
         $search = $this->getSession()->getPage()->find($selector, $locator);
         if ($search === null) {
-            $message = ($message === null) ? 'Could not find the element ' . $locator : $message;
+            $message = $message ?? 'Could not find the element ' . $locator;
             throw new ExpectationException($message, $this->getSession()->getDriver());
         }
 
@@ -346,16 +380,16 @@ class HTMLContext extends RawMinkContext
      * @return NodeElement[]
      * @throws ExpectationException
      */
-    public function findAllOrFail($selector, $locator, $message = null)
+    public function findAllOrFail($selector, $locator, $message = null): array
     {
         $search = $this->getSession()->getPage()->findAll($selector, $locator);
         if (count($search) === 0) {
-            $message = ($message === null) ? 'Could not find any elements ' . $locator : $message;
+            $message = $message ?? 'Could not find any elements ' . $locator;
             throw new ExpectationException($message, $this->getSession()->getDriver());
         }
 
         return $search;
-    }
+    }/** @noinspection MoreThanThreeArgumentsInspection */
 
     /**
      * @param NodeElement $element
@@ -369,12 +403,12 @@ class HTMLContext extends RawMinkContext
     {
         $result = $element->find($selector, $locator);
         if ($result === null) {
-            $message = ($message === null) ? 'Could not find the element ' . $locator : $message;
+            $message = $message ?? 'Could not find the element ' . $locator;
             throw new ExpectationException($message, $this->getSession()->getDriver());
         }
 
         return $result;
-    }
+    }/** @noinspection MoreThanThreeArgumentsInspection */
 
     /**
      * @param NodeElement $element
@@ -384,11 +418,11 @@ class HTMLContext extends RawMinkContext
      * @return NodeElement[]
      * @throws ExpectationException
      */
-    public function findAllOrFailFromNode(NodeElement $element, $selector, $locator, $message = null)
+    public function findAllOrFailFromNode(NodeElement $element, $selector, $locator, $message = null): array
     {
         $result = $element->findAll($selector, $locator);
-        if (count($result) == 0) {
-            $message = ($message === null) ? 'Could not find the element ' . $locator : $message;
+        if (count($result) === 0) {
+            $message = $message ?? 'Could not find the element ' . $locator;
             throw new ExpectationException($message, $this->getSession()->getDriver());
         }
 
@@ -401,7 +435,7 @@ class HTMLContext extends RawMinkContext
      * @param NodeElement $element
      * @return array
      */
-    public function getTable(NodeElement $element)
+    public function getTable(NodeElement $element): array
     {
         //Extract the table data
         $result = [];
