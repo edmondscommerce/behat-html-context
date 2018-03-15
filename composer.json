@@ -17,9 +17,9 @@
         }
     ],
     "require": {
-        "behat/behat": "~3.4",
-        "behat/mink": "~1.7",
-        "behat/mink-extension": "~2.3"
+        "behat/behat": "~3",
+        "behat/mink": "~1",
+        "behat/mink-extension": "~2"
     },
     "autoload": {
         "psr-4": {
