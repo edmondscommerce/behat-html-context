@@ -1,8 +1,9 @@
+sudo: required
 dist: trusty
 addons:
   chrome: stable
 before_install:
-  - google-chrome-stable --headless --no-sandbox --disable-gpu --window-size=1920,1080 --start-maximised http://localhost &
+  - google-chrome-stable --headless --disable-gpu --window-size=1920,1080 --start-maximised http://localhost &
 language: php
 git:
   depth: false
@@ -14,7 +15,10 @@ php:
 matrix:
   allow_failures:
   - php: hhvm
-before_script: bash -x .travis.bash
+before_script:
+  - "sudo chown root /opt/google/chrome/chrome-sandbox"
+  - "sudo chmod 4755 /opt/google/chrome/chrome-sandbox"
+  - "bash -x .travis.bash"
 script: phpUnitQuickTests=0 ./bin/qa
 notifications:
   slack:
