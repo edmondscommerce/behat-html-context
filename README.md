@@ -1,6 +1,8 @@
 # Behat HTML Context
 ## By [Edmonds Commerce](https://www.edmondscommerce.co.uk)
 
+[![Codacy Badge](https://api.codacy.com/project/badge/Grade/e2a47b219c934d3c93e15f5aaa451857)](https://www.codacy.com/app/edmondscommerce/behat-html-context?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=edmondscommerce/behat-html-context&amp;utm_campaign=Badge_Grade)
+
 A simple Behat Context for working with HTML and navigation
 
 ### Installation
