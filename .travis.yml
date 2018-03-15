@@ -2,7 +2,7 @@ dist: trusty
 addons:
   chrome: stable
 before_install:
-  - google-chrome-stable --headless --disable-gpu --window-size=1920,1080 --start-maximised http://localhost &
+  - google-chrome-stable --headless --no-sandbox --disable-gpu --window-size=1920,1080 --start-maximised http://localhost &
 language: php
 git:
   depth: false
