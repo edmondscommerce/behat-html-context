@@ -28,15 +28,17 @@ abstract class AbstractTestCase extends TestCase
     protected function setUpSeleniumMink(bool $headless = true)
     {
         $args = [
-            'args' => [
-                '--disable-gpu',
-                '--window-size=1920,1080',
-                '--start-maximised',
+            'chrome' => [
+                'switches' => [
+                    '--disable-gpu',
+                    '--window-size=1920,1080',
+                    '--start-maximised',
+                ],
             ],
         ];
 
         if ($headless) {
-            $args['args'][] = '--headless';
+            $args['chrome']['switches'][] = '--headless';
         }
 
         $driver = new Selenium2Driver('chrome', $args);
