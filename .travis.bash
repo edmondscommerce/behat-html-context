@@ -21,6 +21,13 @@ git checkout HEAD composer.lock
 
 mkdir -p $DIR/cache/qa && chmod 777 $DIR/cache/qa
 
+echo "
+===========================================
+Starting selenium server in the background
+===========================================
+"
+
+bash ./bin/selenium-background-run.bash
 
 echo "
 ===========================================
