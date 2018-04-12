@@ -321,7 +321,9 @@ class HTMLContext extends RawMinkContext
         $search = $this->getSession()->getPage()->find($selector, $locator);
         if ($search === null)
         {
+            $locator = (is_array($locator) ? implode(':', $locator):  $locator);
             $message = ($message === null) ? 'Could not find the element ' . $locator : $message;
+
             throw new ExpectationException($message, $this->getSession()->getDriver());
         }
 
@@ -341,6 +343,7 @@ class HTMLContext extends RawMinkContext
         $search = $this->getSession()->getPage()->findAll($selector, $locator);
         if (count($search) === 0 || $search === null)
         {
+            $locator = (is_array($locator) ? implode(':', $locator):  $locator);
             $message = ($message === null) ? 'Could not find any elements ' . $locator : $message;
             throw new ExpectationException($message, $this->getSession()->getDriver());
         }
