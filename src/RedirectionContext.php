@@ -1,15 +1,19 @@
 <?php namespace EdmondsCommerce\BehatHtmlContext;
 
-use Behat\Behat\Context\Context;
-use Behat\Behat\Context\SnippetAcceptingContext;
+use /** @noinspection PhpDeprecationInspection */
+    Behat\Behat\Context\SnippetAcceptingContext;
 use Behat\Mink\Driver\GoutteDriver;
 use Behat\Mink\Exception\UnsupportedDriverActionException;
 use Behat\MinkExtension\Context\RawMinkContext;
-use EdmondsCommerce\ContextDependencies;
 
-class RedirectionContext extends RawMinkContext implements Context, SnippetAcceptingContext
+/** @noinspection PhpDeprecationInspection */
+class RedirectionContext extends RawMinkContext implements SnippetAcceptingContext
 {
 
+    /**
+     * @deprecated
+     * @throws UnsupportedDriverActionException
+     */
     public function canIntercept()
     {
         $driver = $this->getSession()->getDriver();
@@ -22,23 +26,30 @@ class RedirectionContext extends RawMinkContext implements Context, SnippetAccep
     }
 
     /**
+     * @deprecated
      * @Given I don't follow redirects
      */
     public function redirectsAreIntercepted()
     {
+        /** @noinspection PhpUndefinedMethodInspection */
         $this->getSession()->getDriver()->getClient()->followRedirects(false);
-
     }
 
     /**
+     * @deprecated
      * @When /^I follow the redirection$/
      * @Then /^I should be redirected$/
+     * @throws \Behat\Mink\Exception\UnsupportedDriverActionException
      */
     public function iFollowTheRedirection()
     {
+        /** @noinspection PhpDeprecationInspection */
         $this->canIntercept();
+        /** @noinspection PhpUndefinedMethodInspection */
         $client = $this->getSession()->getDriver()->getClient();
+        /** @noinspection PhpUndefinedMethodInspection */
         $client->followRedirects(true);
+        /** @noinspection PhpUndefinedMethodInspection */
         $client->followRedirect();
     }
 }
