@@ -127,7 +127,7 @@ class HTMLContext extends RawMinkContext
     public function iDontMatchTheElement($css)
     {
         $session = $this->getSession();
-        $element = $session->getPage()->find('css', $css);
+	$element = $session->getPage()->find('css', $css)->isVisible();
         if (null !== $element)
         {
             throw new \InvalidArgumentException(sprintf('Found element with css: "%s"', $css));
