@@ -1,5 +1,6 @@
 <?php namespace EdmondsCommerce\BehatHtmlContext;
 
+use Behat\Behat\Tester\Exception\PendingException;
 use Behat\Mink\Element\NodeElement;
 use Behat\Mink\Exception\ExpectationException;
 use Behat\MinkExtension\Context\RawMinkContext;
@@ -456,5 +457,26 @@ JS;
         }
 
         return $result;
+    }
+
+    /**
+     * @Given /^I click on the first visible button "([^"]*)"$/
+     * @param string $buttonText
+     *
+     * @throws ExpectationException
+     */
+    public function iClickOnTheFirstVisibleButton(string $buttonText): void
+    {
+        $xpath = sprintf('//button[contains(., "%s")]', $buttonText);
+        $elements = $this->findAllOrFail('xpath',$xpath);
+        foreach ($elements as $element) {
+            if($element->isVisible()){
+                $element->click();
+                return;
+            }
+        }
+
+        $message = 'Could not find visible button with text '.$buttonText;
+        throw new ExpectationException($message, $this->getSession()->getDriver());
     }
 }
