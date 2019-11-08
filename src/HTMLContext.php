@@ -378,6 +378,32 @@ JS;
     }
 
     /**
+     * @param string $selector Locator type
+     * @param array  $locators Array of locators
+     * @param null   $message Optional error message on failure
+     *
+     * @return NodeElement
+     * @throws ExpectationException
+     */
+    public function findOneFromOptionsOrFail($selector, array $locatorOptions, $message = null): NodeElement
+    {
+        foreach ($locatorOptions as $locator) {
+            try {
+                $methodElement = $this->findOneOrFail('xpath', $locator);
+
+                return $methodElement;
+            } catch (ExpectationException $exception) {
+                continue;
+            }
+        }
+
+        throw new ExpectationException(
+            'Could not find locator from given range of options',
+            $this->getSession()->getDriver()
+        );
+    }
+
+    /**
      * Trys to find one or many items, will fail if the result count is 0 or result is null
      * @param string $selector
      * @param string $locator
